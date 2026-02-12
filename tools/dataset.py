@@ -18,6 +18,7 @@ class AnimeDataset(Dataset):
         self.photo_dir = os.path.join(root_dir, 'train_photo')
         self.anime_dir = os.path.join(root_dir, 'anime_style')
         self.smooth_dir = os.path.join(root_dir, 'anime_smooth')
+        self.photo_smooth_dir = os.path.join(root_dir, 'seg_train_5-0.8-50')
 
         # File lists
         self.photos = self._load_files(self.photo_dir)
@@ -41,8 +42,8 @@ class AnimeDataset(Dataset):
     def _load_files(self, dir_path):
         if not os.path.exists(dir_path):
             return []
-        files = [f for f in os.listdir(dir_path) if f.lower().endswith(
-            ('.jpg', '.jpeg', '.png', '.bmp'))]
+        files = sorted([f for f in os.listdir(dir_path) if f.lower().endswith(
+            ('.jpg', '.jpeg', '.png', '.bmp'))])
         return files
 
     def __len__(self):
@@ -67,13 +68,31 @@ class AnimeDataset(Dataset):
         anime_path = os.path.join(self.anime_dir, self.animes[anime_idx])
         smooth_path = os.path.join(self.smooth_dir, self.smooths[smooth_idx])
 
+        # Determine photo_smooth path (paired with photo)
+        photo_filename = self.photos[photo_idx]
+        photo_smooth_path = os.path.join(self.photo_smooth_dir, photo_filename)
+
         photo_img = self._read_img(photo_path)  # RGB uint8
         anime_img = self._read_img(anime_path)
         smooth_img = self._read_img(smooth_path)
 
-        # Compute superpixel smoothing on photo
-        # Doing this here allows num_workers to parallelize it
-        photo_smooth_img = self.compute_superpixel(photo_img)
+        # Load photo_smooth or Compute
+        if os.path.exists(photo_smooth_path):
+            photo_smooth_img = self._read_img(photo_smooth_path)
+            # Resize consistency check? Assuming pre-computed are correct size or resized later.
+            # If read fails (returns black), maybe fallback? _read_img handles missing/failure by returning black.
+            # Check if black/empty?
+            if np.sum(photo_smooth_img) == 0 and os.path.getsize(photo_smooth_path) > 0:
+                # Read failure but file exists? Reread or compute.
+                photo_smooth_img = self.compute_superpixel(photo_img)
+        else:
+            # Fallback to compute if not pre-generated
+            photo_smooth_img = self.compute_superpixel(photo_img)
+
+        # Resize to match photo_img if needed?
+        # photo_img might be any size, transformed later.
+        # If pre-computed images are different size than photo original, transform handles it (Resize).
+        # We assume dataset consistency.
 
         if self.transform:
             photo_img = self.transform(photo_img)
