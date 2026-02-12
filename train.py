@@ -88,6 +88,8 @@ def main():
                 optG.step()
                 pbar.set_description(
                     f"[Init] Epoch {epoch}/{args.init_epochs} Loss: {loss_init.item():.4f}")
+                logger.info(
+                    f"[Init] Epoch {epoch}/{args.init_epochs} Batch {i} Loss: {loss_init.item():.4f}")
             save_checkpoint(netG, optG, epoch, 0,
                             args.checkpoint_dir, 'latest_netG')
 
@@ -187,7 +189,7 @@ def main():
             loss_g.backward()
             optG.step()
 
-            if i % 50 == 0:
+            if i % 1 == 0:
                 logger.info(f"Ep [{epoch}] S [{i}] "
                             f"Dm: {loss_dm.item():.3f} Ds: {loss_ds.item():.3f} G: {loss_g.item():.3f} "
                             f"Sup(Con:{l_con_s:.2f} Col:{l_col_s:.2f}) "
