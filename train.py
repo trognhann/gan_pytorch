@@ -19,7 +19,7 @@ def main():
                         help='Dataset root directory')
     parser.add_argument('--batch_size', type=int, default=8)
     parser.add_argument('--epochs', type=int, default=100)
-    parser.add_argument('--init_epochs', type=int, default=5,
+    parser.add_argument('--init_epochs', type=int, default=1,
                         help='Epochs for generator initialization')
     parser.add_argument('--lr', type=float, default=2e-4)
     parser.add_argument('--checkpoint_dir', type=str, default='checkpoints')

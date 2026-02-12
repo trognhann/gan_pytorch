@@ -68,7 +68,7 @@ class Generator(nn.Module):
         # Double Tail Outputs
         main_out = self.main_tail(x)
 
-        if self.training:
+        if training:
             support_out = self.support_tail(x)
             return main_out, support_out
 
