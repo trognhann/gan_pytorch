@@ -69,7 +69,8 @@ def main():
     loss_fn = AnimeGANLoss(device)
     color_loss_fn = ColorLoss()
     l1_loss = torch.nn.L1Loss()
-    guided_filter = GuidedFilter(r=2, eps=1e-2).to(device)
+    # Increased strength for Teacher-Student target generation (slower but cleaner)
+    guided_filter = GuidedFilter(r=4, eps=1e-2).to(device)
 
     optG = optim.Adam(netG.parameters(), lr=args.lr, betas=(0.5, 0.999))
     optDm = optim.Adam(netDm.parameters(), lr=args.lr, betas=(0.5, 0.999))

@@ -8,7 +8,10 @@ def count_parameters(model):
 
 
 g = Generator()
-d = Discriminator()
+dm = Discriminator(input_nc=3)
+ds = Discriminator(input_nc=1)
 
 print(f"Generator Parameters: {count_parameters(g)/1e6:.2f}M")
-print(f"Discriminator Parameters: {count_parameters(d)/1e6:.2f}M")
+print(f"Main Discriminator (Dm) Parameters: {count_parameters(dm)/1e6:.2f}M")
+print(
+    f"Support Discriminator (Ds) Parameters: {count_parameters(ds)/1e6:.2f}M")
