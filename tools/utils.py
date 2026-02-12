@@ -69,6 +69,6 @@ def denormalize(x):
     return out.clamp(0, 1)
 
 
-def save_images(images, path, nrow=None):
+def save_images(images, path, nrow=8):
     from torchvision.utils import save_image
     save_image(denormalize(images), path, nrow=nrow)
