@@ -18,16 +18,16 @@ class Discriminator(nn.Module):
             spectral_norm(nn.Conv2d(ndf, ndf * 2, kernel_size=3,
                           stride=2, padding=1, bias=False)),
             nn.LeakyReLU(0.2, True),
-            nn.Conv2d(ndf * 2, ndf * 2, kernel_size=3, stride=1,
-                      padding=1, bias=False),  # Grouped conv-like block usually
+            spectral_norm(nn.Conv2d(ndf * 2, ndf * 2, kernel_size=3, stride=1,
+                                    padding=1, bias=False)),  # Grouped conv-like block usually
             nn.LeakyReLU(0.2, True),
 
             # Layer 3: Strided
             spectral_norm(nn.Conv2d(ndf * 2, ndf * 4, kernel_size=3,
                           stride=2, padding=1, bias=False)),
             nn.LeakyReLU(0.2, True),
-            nn.Conv2d(ndf * 4, ndf * 4, kernel_size=3,
-                      stride=1, padding=1, bias=False),
+            spectral_norm(nn.Conv2d(ndf * 4, ndf * 4, kernel_size=3,
+                                    stride=1, padding=1, bias=False)),
             nn.LeakyReLU(0.2, True),
 
             # Layer 4
@@ -36,7 +36,8 @@ class Discriminator(nn.Module):
             nn.LeakyReLU(0.2, True),
 
             # Output Layer (PatchGAN output, 1 channel)
-            nn.Conv2d(ndf * 4, 1, kernel_size=3, stride=1, padding=1)
+            spectral_norm(
+                nn.Conv2d(ndf * 4, 1, kernel_size=3, stride=1, padding=1))
         )
 
     def forward(self, x):

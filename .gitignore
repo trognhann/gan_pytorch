@@ -2,4 +2,5 @@
 *.jpg
 *.png
 *.jpeg
+*.pth
 __pycache__/
