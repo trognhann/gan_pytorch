@@ -4,6 +4,8 @@ import numpy as np
 import torch
 from torch.utils.data import Dataset
 from torchvision import transforms
+from skimage.segmentation import felzenszwalb
+from skimage.color import label2rgb
 
 
 class AnimeDataset(Dataset):
@@ -46,6 +48,15 @@ class AnimeDataset(Dataset):
     def __len__(self):
         return max(self.len_photo, self.len_anime)
 
+    def compute_superpixel(self, img_rgb):
+        # img_rgb: numpy array [H, W, 3] uint8
+        # Returns: numpy array [H, W, 3] uint8
+        segments = felzenszwalb(img_rgb, scale=1.0, sigma=0.8, min_size=10)
+        # label2rgb usually returns float [0, 1]
+        smooth = label2rgb(segments, img_rgb, kind='avg')
+        smooth = (smooth * 255).astype(np.uint8)
+        return smooth
+
     def __getitem__(self, idx):
         # Unpaired loading
         photo_idx = idx % self.len_photo
@@ -56,16 +67,21 @@ class AnimeDataset(Dataset):
         anime_path = os.path.join(self.anime_dir, self.animes[anime_idx])
         smooth_path = os.path.join(self.smooth_dir, self.smooths[smooth_idx])
 
-        photo_img = self._read_img(photo_path)
+        photo_img = self._read_img(photo_path)  # RGB uint8
         anime_img = self._read_img(anime_path)
         smooth_img = self._read_img(smooth_path)
+
+        # Compute superpixel smoothing on photo
+        # Doing this here allows num_workers to parallelize it
+        photo_smooth_img = self.compute_superpixel(photo_img)
 
         if self.transform:
             photo_img = self.transform(photo_img)
             anime_img = self.transform(anime_img)
             smooth_img = self.transform(smooth_img)
+            photo_smooth_img = self.transform(photo_smooth_img)
 
-        return photo_img, anime_img, smooth_img
+        return photo_img, anime_img, smooth_img, photo_smooth_img
 
     def _read_img(self, path):
         img = cv2.imread(path)

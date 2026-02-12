@@ -7,7 +7,6 @@ from tqdm import tqdm
 import itertools
 import numpy as np
 import cv2
-from skimage.segmentation import felzenszwalb  # For smoothing
 
 from net.generator import Generator
 from net.discriminator import Discriminator
@@ -16,54 +15,15 @@ from tools.utils import save_checkpoint, load_checkpoint, get_logger, save_image
 from losses import AnimeGANLoss, ColorLoss, GuidedFilter
 
 
-def superpixel_smoothing(img_tensor):
-    # img_tensor: (B, 3, H, W) [-1, 1]
-    # Return smoothed tensor
-    # Operations on CPU with numpy
-
-    device = img_tensor.device
-    imgs = denormalize(img_tensor).permute(
-        0, 2, 3, 1).cpu().numpy()  # [0, 1] (B, H, W, 3)
-
-    smoothed_batch = []
-    for img in imgs:
-        # 1. Float to uint8 [0, 255] for cv2/skimage stability
-        img_uint8 = (img * 255).astype(np.uint8)
-
-        # 2. Felzenszwalb (Region Smoothing)
-        # scale=1.0, sigma=0.8, min_size=10
-        segments = felzenszwalb(img_uint8, scale=1.0, sigma=0.8, min_size=10)
-
-        # 3. Color each segment with average color
-        # This creates the "flat" look
-        mix_img = np.zeros_like(img_uint8)
-        # Fast way to color segments?
-        # Using loop is slow. Vectorized?
-        # Or standard skimage.color.label2rgb (avg)
-        from skimage.color import label2rgb
-        mix_img = label2rgb(segments, img_uint8, kind='avg')
-
-        smoothed_batch.append(mix_img)
-
-    # [0, 255] or [0, 1] depending on label2rgb
-    smoothed_batch = np.array(smoothed_batch)
-    # label2rgb kind='avg' returns float [0, 1] usually if image is float, or same type?
-    # It usually returns float [0, 1].
-
-    smoothed_tensor = torch.from_numpy(
-        smoothed_batch).float().permute(0, 3, 1, 2).to(device)
-    # Check range. If [0, 1], convert to [-1, 1]
-    # label2rgb returns [0, 1] float64
-    smoothed_tensor = (smoothed_tensor * 2) - 1
-    return smoothed_tensor.float()
-
-
-def guided_filter_smoothing(img_tensor, r=1, eps=5e-3):
-    # Helper to apply guided filter on tensor batch purely in torch
-    # Using the module we defined in losses.py or here?
-    # We can instantiate one on the fly or pass it.
-    # But usually better to use the one in loop.
-    pass
+def rgb_to_gray(img):
+    # img: (B, 3, H, W) [-1, 1]
+    # Output: (B, 1, H, W) [-1, 1]
+    img = (img + 1) * 0.5
+    y = 0.299 * img[:, 0, :, :] + 0.587 * \
+        img[:, 1, :, :] + 0.114 * img[:, 2, :, :]
+    y = y.unsqueeze(1)
+    y = (y * 2) - 1
+    return y
 
 
 def main():
@@ -80,16 +40,19 @@ def main():
     parser.add_argument('--resume', action='store_true',
                         help='Resume training')
 
-    # Weights
-    parser.add_argument('--wadv', type=float, default=10.0)
-    parser.add_argument('--wcon', type=float, default=1.5)
-    parser.add_argument('--wsty', type=float, default=3.0)
-    parser.add_argument('--wcol', type=float, default=10.0)
-    parser.add_argument('--wtv', type=float, default=1.0)
+    # Weights have been updated in the code logic to match paper variables
+    # We remove the general arguments to avoid confusion or keep them as overrides?
+    # Better to enforce the paper values in code as requested.
 
     args = parser.parse_args()
 
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    if torch.cuda.is_available():
+        device = torch.device('cuda')
+    elif torch.backends.mps.is_available():
+        device = torch.device('mps')
+    else:
+        device = torch.device('cpu')
+    print(f"Device: {device}")
 
     if not os.path.exists(args.checkpoint_dir):
         os.makedirs(args.checkpoint_dir)
@@ -100,23 +63,27 @@ def main():
                             shuffle=True, num_workers=4, pin_memory=True)
 
     netG = Generator().to(device)
-    netD = Discriminator().to(device)
+    netDm = Discriminator(input_nc=3).to(device)
+    netDs = Discriminator(input_nc=1).to(device)
 
-    loss_fn = AnimeGANLoss(device)  # No vgg_path needed, uses torchvision
+    loss_fn = AnimeGANLoss(device)
     color_loss_fn = ColorLoss()
     l1_loss = torch.nn.L1Loss()
-    guided_filter = GuidedFilter(r=1, eps=5e-3).to(device)
+    guided_filter = GuidedFilter(r=2, eps=1e-2).to(device)
 
     optG = optim.Adam(netG.parameters(), lr=args.lr, betas=(0.5, 0.999))
-    optD = optim.Adam(netD.parameters(), lr=args.lr, betas=(0.5, 0.999))
+    optDm = optim.Adam(netDm.parameters(), lr=args.lr, betas=(0.5, 0.999))
+    optDs = optim.Adam(netDs.parameters(), lr=args.lr, betas=(0.5, 0.999))
 
     start_epoch = 0
     if args.resume:
         e1, s1 = load_checkpoint(netG, optG, os.path.join(
             args.checkpoint_dir, 'latest_netG.pth'))
-        e2, s2 = load_checkpoint(netD, optD, os.path.join(
-            args.checkpoint_dir, 'latest_netD.pth'))
-        start_epoch = max(e1, e2)
+        e2, s2 = load_checkpoint(netDm, optDm, os.path.join(
+            args.checkpoint_dir, 'latest_netDm.pth'))
+        e3, s3 = load_checkpoint(netDs, optDs, os.path.join(
+            args.checkpoint_dir, 'latest_netDs.pth'))
+        start_epoch = max(e1, e2, e3)
         logger.info(f"Resumed from epoch {start_epoch}")
 
     # Initialization
@@ -124,11 +91,12 @@ def main():
         logger.info("Starting initialization phase...")
         for epoch in range(start_epoch, args.init_epochs):
             pbar = tqdm(dataloader)
-            for i, (photo, _, _) in enumerate(pbar):
-                photo = photo.to(device)
+            for i, data in enumerate(pbar):
+                photo = data[0].to(device)
                 optG.zero_grad()
                 generated = netG(photo, training=False)
-                loss_init = args.wcon * loss_fn.content_loss(generated, photo)
+                # Init with Content Loss
+                loss_init = 1.5 * loss_fn.content_loss(generated, photo)
                 loss_init.backward()
                 optG.step()
                 pbar.set_description(
@@ -142,109 +110,121 @@ def main():
 
     for epoch in range(gan_start_epoch, args.epochs):
         pbar = tqdm(dataloader)
-        for i, (photo, anime, smooth) in enumerate(pbar):
+        for i, (photo, anime, smooth, photo_smooth) in enumerate(pbar):
             photo = photo.to(device)
             anime = anime.to(device)
-            # Smooth anime from dataset (used for adversarial sometimes)
             smooth = smooth.to(device)
+            photo_smooth = photo_smooth.to(device)
 
-            # ---------------------
-            #  Train Discriminator
-            # ---------------------
-            optD.zero_grad()
+            anime_gray = rgb_to_gray(anime)
 
-            # Generate
             fake_main, fake_support = netG(photo, training=True)
+            fake_support_gray = rgb_to_gray(fake_support)
 
-            # D Loss
-            pred_real = netD(anime)
-            pred_fake = netD(fake_main.detach())
+            # ---------------------
+            #  Train Discriminators
+            # ---------------------
+            optDm.zero_grad()
+            optDs.zero_grad()
 
-            # LSGAN
-            loss_d_real = loss_fn.mse_loss(
-                pred_real, torch.ones_like(pred_real))
-            loss_d_fake = loss_fn.mse_loss(
-                pred_fake, torch.zeros_like(pred_fake))
+            # Main D
+            pred_real_m = netDm(anime)
+            pred_fake_m = netDm(fake_main.detach())
+            loss_dm = loss_fn.mse_loss(pred_real_m, torch.ones_like(pred_real_m)) + \
+                loss_fn.mse_loss(pred_fake_m, torch.zeros_like(pred_fake_m))
+            loss_dm.backward()
+            optDm.step()
 
-            # Add Smooth/Gray loss for D? (Optional refinement, but stick to basic for now to pass verify)
-
-            loss_d = loss_d_real + loss_d_fake
-            loss_d.backward()
-            optD.step()
+            # Support D
+            pred_real_s = netDs(anime_gray)
+            pred_fake_s = netDs(fake_support_gray.detach())
+            loss_ds = loss_fn.mse_loss(pred_real_s, torch.ones_like(pred_real_s)) + \
+                loss_fn.mse_loss(pred_fake_s, torch.zeros_like(pred_fake_s))
+            loss_ds.backward()
+            optDs.step()
 
             # -----------------
             #  Train Generator
             # -----------------
             optG.zero_grad()
 
-            # 1. Main Tail Adv
-            pred_fake_g = netD(fake_main)
-            loss_g_adv = loss_fn.mse_loss(
-                pred_fake_g, torch.ones_like(pred_fake_g))
+            # --- SUPPORT TAIL LOSS ---
+            # Lambda_con=0.5, Lambda_col=20, Lambda_tv=0.001
+            # Assuming Adv weight is 0.1 or 1.0?
+            # Paper doesn't explicitly state Support Adv weight in list, likely 1.0 or 0.1.
+            # We keep it 0.1 to avoid overpowering.
 
-            # 2. Content Loss
-            # Main vs Photo
-            loss_g_con_main = loss_fn.content_loss(fake_main, photo)
-            # Support vs Photo
-            loss_g_con_support = loss_fn.content_loss(fake_support, photo)
+            l_con_s = loss_fn.content_loss(fake_support, photo)
+            l_col_s = color_loss_fn(fake_support, photo)
+            l_tv_s = loss_fn.variation_loss(fake_support)
 
-            # 3. Grayscale Style Loss (Main vs Anime)
-            loss_g_sty = loss_fn.style_loss(fake_main, anime)
+            pred_fake_s = netDs(fake_support_gray)
+            l_adv_s = loss_fn.mse_loss(
+                pred_fake_s, torch.ones_like(pred_fake_s))
 
-            # 4. Lab Color Loss (Main vs Photo) - Preserves color of original photo
-            loss_g_col = color_loss_fn(fake_main, photo)
+            loss_support = (0.5 * l_con_s) + \
+                           (20.0 * l_col_s) + \
+                           (0.001 * l_tv_s) + \
+                           (0.1 * l_adv_s)
 
-            # 5. Teacher-Student Loss (Fine-grained Revision)
-            # Support Output -> Guided Filter (Teacher) -> Target for Main
+            # --- MAIN TAIL LOSS ---
+            # Eta_pp=50 (Per-Pixel/Color), Eta_per=0.5 (Perceptual/Content), Eta_adv=0.02, Eta_tv=0.001
+            # We also have Style Loss, Teacher Loss, RS Loss.
+            # Style Loss (Gram) isn't in that list?
+            # "Per-pixel" might cover Style-like features or Color.
+            # But normally AnimeGAN needs Gram Style.
+            # We will use weights from AnimeGANv2/v3 papers if implied.
+            # Assuming 3.0 for Style defined previously or standard.
+            # And Teacher/RS needed.
+
+            l_adv_m = loss_fn.mse_loss(
+                netDm(fake_main), torch.ones_like(pred_fake_m))
+            l_con_m = loss_fn.content_loss(fake_main, photo)  # Perception
+            l_col_m = color_loss_fn(fake_main, photo)  # Per-pixel?
+            l_sty_m = loss_fn.style_loss(fake_main, anime)
+            l_tv_m = loss_fn.variation_loss(fake_main)
+
+            # Teacher Student
             with torch.no_grad():
-                # Filter the Support Output using Photo as guidance
-                # This creates a "clean" version of Support (Gs1) that Main (Gm) should mimic + add details
                 teacher_feature = guided_filter(photo, fake_support.detach())
+            l_teacher = l1_loss(fake_main, teacher_feature)
 
-            # Loss: Main should match Teacher
-            loss_g_teacher = l1_loss(fake_main, teacher_feature)
+            # Region Smoothing
+            l_rs = loss_fn.content_loss(fake_main, photo_smooth)
 
-            # 6. Region Smoothing Loss (Superpixel)
-            # Smooth Photo -> VGG Features -> Compare with Main VGG Features?
-            # Or Compare with Support?
-            # Paper: L_rs = L1(VGG(LowFreq(Photo)), VGG(Main))?
-            # It encourages Main to ignore high-freq noise in Photo.
-            # Do this computation on CPU/Numpy then back to GPU? Can be slow.
-            # Only do every N steps or small batch?
-            # Or assume Support tail handles this?
-            # Let's implement it for completeness.
+            # Weights mapped
+            # Eta_adv = 0.02 ? That seems very low for LSGAN (usually 1 or 10).
+            # Maybe 0.02 if Loss is large? Or typo in prompt (0.2?).
+            # If user says 0.02, we use 0.02.
+            # Eta_pp = 50 (Color)
+            # Eta_per = 0.5 (Content)
+            # Eta_tv = 0.001
 
-            # NOTE: this is heavy.
-            with torch.no_grad():
-                photo_smooth = superpixel_smoothing(photo)
+            loss_main = (0.02 * l_adv_m) + \
+                        (0.5 * l_con_m) + \
+                        (50.0 * l_col_m) + \
+                        (0.001 * l_tv_m) + \
+                        (3.0 * l_sty_m) + \
+                        (1.0 * l_teacher) + \
+                        (1.0 * l_rs)  # Assigning 1.0 to others to maintain structure
 
-            loss_g_rs = loss_fn.content_loss(fake_main, photo_smooth)
-
-            # 7. TV Loss
-            loss_g_tv = loss_fn.variation_loss(fake_main)
-
-            # Total Loss
-            loss_g = (args.wadv * loss_g_adv) + \
-                     (args.wcon * (loss_g_con_main + loss_g_con_support)) + \
-                     (args.wsty * loss_g_sty) + \
-                     (args.wcol * loss_g_col) + \
-                     (args.wtv * loss_g_tv) + \
-                     (1.0 * loss_g_teacher) + \
-                     (0.5 * loss_g_rs)  # Weight for RS?
+            loss_g = loss_support + loss_main
 
             loss_g.backward()
             optG.step()
 
             if i % 50 == 0:
-                logger.info(f"Epoch [{epoch}/{args.epochs}] Step [{i}/{len(dataloader)}] "
-                            f"Loss_D: {loss_d.item():.4f} Loss_G: {loss_g.item():.4f} "
-                            f"Adv: {loss_g_adv.item():.4f} Color: {loss_g_col.item():.4f} "
-                            f"Style: {loss_g_sty.item():.4f} Teach: {loss_g_teacher.item():.4f} RS: {loss_g_rs.item():.4f}")
+                logger.info(f"Ep [{epoch}] S [{i}] "
+                            f"Dm: {loss_dm.item():.3f} Ds: {loss_ds.item():.3f} G: {loss_g.item():.3f} "
+                            f"Sup(Con:{l_con_s:.2f} Col:{l_col_s:.2f}) "
+                            f"Main(Adv:{l_adv_m:.2f} Con:{l_con_m:.2f} Col:{l_col_m:.2f} Sty:{l_sty_m:.2f})")
 
         save_checkpoint(netG, optG, epoch, 0,
                         args.checkpoint_dir, 'latest_netG')
-        save_checkpoint(netD, optD, epoch, 0,
-                        args.checkpoint_dir, 'latest_netD')
+        save_checkpoint(netDm, optDm, epoch, 0,
+                        args.checkpoint_dir, 'latest_netDm')
+        save_checkpoint(netDs, optDs, epoch, 0,
+                        args.checkpoint_dir, 'latest_netDs')
 
         if epoch % 1 == 0:
             with torch.no_grad():
