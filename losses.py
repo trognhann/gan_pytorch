@@ -36,55 +36,6 @@ class GuidedFilter(nn.Module):
         return output
 
 
-class ColorLoss(nn.Module):
-    def __init__(self):
-        super(ColorLoss, self).__init__()
-        self.l1 = nn.L1Loss()
-
-    def rgb_to_lab(self, img):
-        # Differentiable RGB to Lab
-        # Input img: [-1, 1] RGB
-        img = (img + 1) * 0.5  # [0, 1]
-
-        # RGB to XYZ
-        # Matrices from Kornia/standard definitions
-        r, g, b = img[:, 0, ...], img[:, 1, ...], img[:, 2, ...]
-
-        # Linearize RGB (assuming sRGB input)
-        # x = torch.where(x > 0.04045, ((x + 0.055) / 1.055) ** 2.4, x / 12.92)
-        # Simplified linear approximation can be used for stability, but let's try standard.
-        # For GANs, often a linear approximation is sufficient and more stable for gradients.
-
-        X = 0.412453 * r + 0.357580 * g + 0.180423 * b
-        Y = 0.212671 * r + 0.715160 * g + 0.072169 * b
-        Z = 0.019334 * r + 0.119193 * g + 0.950227 * b
-
-        # XYZ to Lab
-        # Reference White D65
-        Xn, Yn, Zn = 0.95047, 1.00000, 1.08883
-
-        X = X / Xn
-        Y = Y / Yn
-        Z = Z / Zn
-
-        # f(t)
-        # t > 0.008856 -> t^(1/3)
-        # t <= 0.008856 -> 7.787*t + 16/116
-        threshold = 0.008856
-
-        def f(t):
-            return torch.where(t > threshold, torch.pow(torch.clamp(t, min=threshold), 1/3), 7.787 * t + 16/116)
-
-        L = 116 * f(Y) - 16
-        a = 500 * (f(X) - f(Y))
-        b = 200 * (f(Y) - f(Z))
-
-        return torch.stack([L, a, b], dim=1)
-
-    def forward(self, x, y):
-        return self.l1(self.rgb_to_lab(x), self.rgb_to_lab(y))
-
-
 class AnimeGANLoss(nn.Module):
     def __init__(self, device='cpu'):
         super(AnimeGANLoss, self).__init__()
@@ -113,49 +64,62 @@ class AnimeGANLoss(nn.Module):
     def extract_features(self, x):
         x = self.normalize_vgg(x)
         features = {}
-        # VGG19 Layer mapping (approx)
-        # conv4_4 is what we usually want for content.
-        # relu4_4 is at index 26
-
         out = x
         for i, layer in enumerate(self.vgg):
             out = layer(out)
             if i == 26:  # relu4_4
                 features['relu4_4'] = out
                 break
-                # Can extend for style features if needed (relu1_1, relu2_1, etc.)
-                # But typically efficient Style Loss uses single layer or just multiple calls.
         return features
 
-    def rgb_to_gray(self, x):
+    def rgb_to_gray(self, img):
+        # ITU-R BT.601 formula
         # Input: [-1, 1] RGB
-        # Y = 0.299R + 0.587G + 0.114B
-        # Output: [-1, 1] Gray (3 channels)
-        x_norm = (x + 1) * 0.5
-        gray = 0.299 * x_norm[:, 0, ...] + 0.587 * \
-            x_norm[:, 1, ...] + 0.114 * x_norm[:, 2, ...]
-        gray = gray.unsqueeze(1).repeat(1, 3, 1, 1)  # (B, 3, H, W)
-        return (gray - 0.5) * 2
+        # Output: [-1, 1] Gray (B, 1, H, W)
+        x_norm = (img + 1) * 0.5
+        y = 0.299 * x_norm[:, 0, :, :] + 0.587 * \
+            x_norm[:, 1, :, :] + 0.114 * x_norm[:, 2, :, :]
+        y = y.unsqueeze(1)
+        return (y * 2) - 1
+
+    def rgb_to_yuv(self, img):
+        # Input: [-1, 1] RGB
+        # Output: [-1, 1] YUV
+        # Using standard RGB to YUV matrix
+        img = (img + 1) * 0.5  # [0, 1]
+
+        r, g, b = img[:, 0, :, :], img[:, 1, :, :], img[:, 2, :, :]
+
+        y = 0.299 * r + 0.587 * g + 0.114 * b
+        u = -0.147 * r - 0.289 * g + 0.436 * b
+        v = 0.615 * r - 0.515 * g - 0.100 * b
+
+        yuv = torch.stack([y, u, v], dim=1)
+        # Scale back? L1 loss is relative, but usually we keep ranges similar.
+        # Y is [0, 1]. U is [-0.436, 0.436]. V is [-0.615, 0.615].
+        return yuv
 
     def content_loss(self, fake, real):
-        # Standard content loss (RGB)
         f_fake = self.extract_features(fake)['relu4_4']
         f_real = self.extract_features(real)['relu4_4']
         return self.l1_loss(f_fake, f_real)
 
     def style_loss(self, fake, style):
-        # Grayscale Style Loss - Crucial for structure only
-        fake_gray = self.rgb_to_gray(fake)
-        style_gray = self.rgb_to_gray(style)
+        # Grayscale Style Loss
+        # Convert to Gray and then expand to 3 channels for VGG
+        fake_gray = self.rgb_to_gray(fake).repeat(1, 3, 1, 1)
+        style_gray = self.rgb_to_gray(style).repeat(1, 3, 1, 1)
 
-        # For Gram matrix, we usually use multiple layers.
-        # But if restricted to one or similar to content:
         f_fake = self.extract_features(fake_gray)['relu4_4']
         f_style = self.extract_features(style_gray)['relu4_4']
 
         gram_fake = self.gram(f_fake)
         gram_style = self.gram(f_style)
         return self.l1_loss(gram_fake, gram_style)
+
+    def color_loss(self, x, y):
+        # YUV Color Loss (better than RGB, simpler fallback for Lab)
+        return self.l1_loss(self.rgb_to_yuv(x), self.rgb_to_yuv(y))
 
     def variation_loss(self, x):
         return torch.sum(torch.abs(x[:, :, :, :-1] - x[:, :, :, 1:])) + \

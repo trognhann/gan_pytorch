@@ -12,22 +12,12 @@ from net.generator import Generator
 from net.discriminator import Discriminator
 from tools.dataset import AnimeDataset
 from tools.utils import save_checkpoint, load_checkpoint, get_logger, save_images, denormalize
-from losses import AnimeGANLoss, ColorLoss, GuidedFilter
-
-
-def rgb_to_gray(img):
-    # img: (B, 3, H, W) [-1, 1]
-    # Output: (B, 1, H, W) [-1, 1]
-    img = (img + 1) * 0.5
-    y = 0.299 * img[:, 0, :, :] + 0.587 * \
-        img[:, 1, :, :] + 0.114 * img[:, 2, :, :]
-    y = y.unsqueeze(1)
-    y = (y * 2) - 1
-    return y
+from losses import AnimeGANLoss, GuidedFilter
 
 
 def main():
     parser = argparse.ArgumentParser(description='AnimeGANv3 Training')
+    # ... (args unchanged)
     parser.add_argument('--dataset', type=str, required=True,
                         help='Dataset root directory')
     parser.add_argument('--batch_size', type=int, default=8)
@@ -39,10 +29,6 @@ def main():
     parser.add_argument('--log_dir', type=str, default='logs')
     parser.add_argument('--resume', action='store_true',
                         help='Resume training')
-
-    # Weights have been updated in the code logic to match paper variables
-    # We remove the general arguments to avoid confusion or keep them as overrides?
-    # Better to enforce the paper values in code as requested.
 
     args = parser.parse_args()
 
@@ -67,7 +53,7 @@ def main():
     netDs = Discriminator(input_nc=1).to(device)
 
     loss_fn = AnimeGANLoss(device)
-    color_loss_fn = ColorLoss()
+    # ColorLoss is now integrated into AnimeGANLoss
     l1_loss = torch.nn.L1Loss()
     # Increased strength for Teacher-Student target generation (slower but cleaner)
     guided_filter = GuidedFilter(r=4, eps=1e-2).to(device)
@@ -117,10 +103,11 @@ def main():
             smooth = smooth.to(device)
             photo_smooth = photo_smooth.to(device)
 
-            anime_gray = rgb_to_gray(anime)
+            # Use loss_fn.rgb_to_gray
+            anime_gray = loss_fn.rgb_to_gray(anime)
 
             fake_main, fake_support = netG(photo, training=True)
-            fake_support_gray = rgb_to_gray(fake_support)
+            fake_support_gray = loss_fn.rgb_to_gray(fake_support)
 
             # ---------------------
             #  Train Discriminators
@@ -152,11 +139,11 @@ def main():
             # --- SUPPORT TAIL LOSS ---
             # Lambda_con=0.5, Lambda_col=20, Lambda_tv=0.001
             # Assuming Adv weight is 0.1 or 1.0?
-            # Paper doesn't explicitly state Support Adv weight in list, likely 1.0 or 0.1.
             # We keep it 0.1 to avoid overpowering.
 
             l_con_s = loss_fn.content_loss(fake_support, photo)
-            l_col_s = color_loss_fn(fake_support, photo)
+            l_col_s = loss_fn.color_loss(
+                fake_support, photo)  # Use loss_fn.color_loss
             l_tv_s = loss_fn.variation_loss(fake_support)
 
             pred_fake_s = netDs(fake_support_gray)
@@ -170,18 +157,11 @@ def main():
 
             # --- MAIN TAIL LOSS ---
             # Eta_pp=50 (Per-Pixel/Color), Eta_per=0.5 (Perceptual/Content), Eta_adv=0.02, Eta_tv=0.001
-            # We also have Style Loss, Teacher Loss, RS Loss.
-            # Style Loss (Gram) isn't in that list?
-            # "Per-pixel" might cover Style-like features or Color.
-            # But normally AnimeGAN needs Gram Style.
-            # We will use weights from AnimeGANv2/v3 papers if implied.
-            # Assuming 3.0 for Style defined previously or standard.
-            # And Teacher/RS needed.
 
             l_adv_m = loss_fn.mse_loss(
                 netDm(fake_main), torch.ones_like(pred_fake_m))
             l_con_m = loss_fn.content_loss(fake_main, photo)  # Perception
-            l_col_m = color_loss_fn(fake_main, photo)  # Per-pixel?
+            l_col_m = loss_fn.color_loss(fake_main, photo)  # Per-pixel?
             l_sty_m = loss_fn.style_loss(fake_main, anime)
             l_tv_m = loss_fn.variation_loss(fake_main)
 
@@ -194,20 +174,13 @@ def main():
             l_rs = loss_fn.content_loss(fake_main, photo_smooth)
 
             # Weights mapped
-            # Eta_adv = 0.02 ? That seems very low for LSGAN (usually 1 or 10).
-            # Maybe 0.02 if Loss is large? Or typo in prompt (0.2?).
-            # If user says 0.02, we use 0.02.
-            # Eta_pp = 50 (Color)
-            # Eta_per = 0.5 (Content)
-            # Eta_tv = 0.001
-
             loss_main = (0.02 * l_adv_m) + \
                         (0.5 * l_con_m) + \
                         (50.0 * l_col_m) + \
                         (0.001 * l_tv_m) + \
                         (3.0 * l_sty_m) + \
                         (1.0 * l_teacher) + \
-                        (1.0 * l_rs)  # Assigning 1.0 to others to maintain structure
+                        (1.0 * l_rs)
 
             loss_g = loss_support + loss_main
 
