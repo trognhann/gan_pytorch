@@ -1,6 +1,7 @@
 import os
 import argparse
 import time
+import logging
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -25,6 +26,8 @@ def parse_args():
     parser = argparse.ArgumentParser(description="AnimeGANv3 PyTorch Training")
     parser.add_argument(
         '--config', type=str, default='config.yaml', help='Path to config file')
+    parser.add_argument(
+        '--resume', type=str, default=None, help='Path to checkpoint to resume training from')
     return parser.parse_args()
 
 
@@ -90,16 +93,48 @@ def main():
     epochs = config['training']['epochs']
     init_epochs = config['training']['init_epochs']
 
+    log_dir = f"logs/AnimeGANv3_{config['training']['dataset']}"
     if is_main_process:
-        writer = SummaryWriter(
-            log_dir=f"logs/AnimeGANv3_{config['training']['dataset']}")
+        writer = SummaryWriter(log_dir=log_dir)
         ckpt_dir = config['training'].get('checkpoint_dir', 'checkpoint')
         os.makedirs(ckpt_dir, exist_ok=True)
+        os.makedirs(log_dir, exist_ok=True)
 
+    # Configure logger
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.INFO if is_main_process else logging.WARNING)
+    if is_main_process:
+        fh = logging.FileHandler(os.path.join(log_dir, 'train.log'))
+        fh.setFormatter(logging.Formatter('%(asctime)s - %(message)s'))
+        logger.addHandler(fh)
+        ch = logging.StreamHandler()
+        ch.setFormatter(logging.Formatter('%(message)s'))
+        logger.addHandler(ch)
+
+    start_epoch = 0
     global_step = 0
-    print(f"[{rank}] Starting training...")
+    if args.resume and os.path.isfile(args.resume):
+        if is_main_process:
+            logger.info(f"Loading checkpoint '{args.resume}'")
+        ckpt = torch.load(args.resume, map_location=device)
+        G_net.load_state_dict(ckpt['G'])
+        (D.module if isinstance(D, DDP) else D).load_state_dict(ckpt['D'])
+        optim_G.load_state_dict(ckpt['optim_G'])
+        optim_D.load_state_dict(ckpt['optim_D'])
+        if 'optim_G_init' in ckpt:
+            optim_G_init.load_state_dict(ckpt['optim_G_init'])
+        if 'scaler' in ckpt and ckpt['scaler'] is not None and use_amp:
+            scaler.load_state_dict(ckpt['scaler'])
 
-    for epoch in range(epochs):
+        start_epoch = ckpt['epoch'] + 1
+        global_step = ckpt.get('global_step', start_epoch * len(dataloader))
+        if is_main_process:
+            logger.info(
+                f"Loaded checkpoint '{args.resume}' (Resuming from epoch {start_epoch})")
+
+    logger.info(f"[{rank}] Starting training...")
+
+    for epoch in range(start_epoch, epochs):
         if sampler:
             sampler.set_epoch(epoch)
 
@@ -127,7 +162,7 @@ def main():
                 scaler.update()
 
                 if is_main_process and idx % 10 == 0:
-                    print(
+                    logger.info(
                         f"Epoch: {epoch}/{init_epochs} Step: {idx}/{len(dataloader)} Pre_train_G_loss: {init_loss.item():.6f}")
                     writer.add_scalar("Loss/Pre_train_G_loss",
                                       init_loss.item(), global_step)
@@ -226,10 +261,13 @@ def main():
                 scaler.update()
 
                 if is_main_process and idx % 10 == 0:
-                    print(
+                    logger.info(
                         f"Epoch: {epoch}/{epochs} Step: {idx}/{len(dataloader)}")
-                    print(
-                        f"G_loss: {Generator_loss.item():.4f} D_loss: {Discriminator_loss.item():.4f}")
+                    logger.info(f"G_loss: {Generator_loss.item():.4f} "
+                                f"[Sup: Adv={g_adv_loss.item():.4f}, Con={con_loss.item():.4f}, Sty={sty_loss.item():.4f}, Col={color_loss.item():.4f}, RS={rs_loss.item():.4f}, TV={tv_loss.item():.4f}] "
+                                f"[Main: Adv={g_m_loss.item():.4f}, P0={p0_loss.item():.4f}, P4={p4_loss.item():.4f}, TV={tv_loss_m.item():.4f}]")
+                    logger.info(f"D_loss: {Discriminator_loss.item():.4f} "
+                                f"[Sup={D_support_loss.item():.4f}, Main={D_main_loss.item():.4f}]")
                     writer.add_scalar(
                         "Loss/G", Generator_loss.item(), global_step)
                     writer.add_scalar(
@@ -244,8 +282,13 @@ def main():
                 'D': D.module.state_dict() if isinstance(D, DDP) else D.state_dict(),
                 'optim_G': optim_G.state_dict(),
                 'optim_D': optim_D.state_dict(),
-                'epoch': epoch
+                'optim_G_init': optim_G_init.state_dict(),
+                'scaler': scaler.state_dict() if use_amp else None,
+                'epoch': epoch,
+                'global_step': global_step
             }, os.path.join(ckpt_dir, f"AnimeGANv3_ep{epoch}.pt"))
+            logger.info(
+                f"Saved checkpoint to {os.path.join(ckpt_dir, f'AnimeGANv3_ep{epoch}.pt')}")
 
     if is_main_process:
         writer.close()

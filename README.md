@@ -64,7 +64,13 @@ To train using multiple NVIDIA GPUs, PyTorch handles parallel processes optimall
 torchrun --nproc_per_node=<num_gpus> train.py --config config.yaml
 ```
 
-Training parameters, images, and model metrics will automatically route to `logs/` (readable via TensorBoard) and model weights periodically overwrite/save inside the `checkpoint/` directory as `.pt` states.
+### Resuming Training from a Checkpoint (Fault Tolerance)
+If your training crashes or gets interrupted, you can resume exactly from where you left off. The checkpoint restores model parameters, gradients scales, internal Epoch increments, and optimizer states:
+```bash
+python train.py --config config.yaml --resume checkpoint/AnimeGANv3_epXYZ.pt
+```
+
+Training parameters, images, and model metrics will automatically route to `logs/` (readable via TensorBoard) and model weights periodically overwrite/save inside the `checkpoint/` directory as `.pt` states. A detailed execution log breaking down every sub-loss explicitly will be recorded securely in `logs/AnimeGANv3_{dataset}/train.log`.
 
 ---
 
