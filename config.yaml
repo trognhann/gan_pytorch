@@ -1,0 +1,46 @@
+# config.yaml (Training and Model Configurations for AnimeGANv3 PyTorch)
+
+training:
+  # General
+  dataset: "Shinkai"      # Dataset name (e.g., 'Hayao', 'Shinkai')
+  dataset_dir: "dataset" # Directory where datasets are stored
+  epochs: 2
+  init_epochs: 1          # Generator pre-train epochs
+  batch_size: 8
+  save_freq: 1            # Frequency (in epochs) to save checkpoints
+  checkpoint_dir: "checkpoint"  # Directory where checkpoints are saved
+
+  # Learning Rates
+  init_lr: 2.0e-4         # Pre-train generator LR
+  g_lr: 1.0e-4            # GAN generator LR
+  d_lr: 1.0e-4            # GAN discriminator LR
+  adam_betas: [0.5, 0.999]
+
+  # DDP and AMP
+  use_amp: true           # Mixed precision
+  num_workers: 8
+
+  # Image handling
+  img_size: [256, 256]    # Training resolution [H, W]
+
+loss_weights:
+  # Support Tail
+  con_weight: 0.5
+  sty_weight: [0.1, 5.0, 25.0]
+  color_weight: 10.0
+  tv_weight: 0.001
+  adv_weight: 1.0         # LSGAN D fake vs anime real weight scaling
+  d_smooth_weight: 2.0
+  region_smooth_weight: 0.2
+  vgg_region_weight: 0.2
+  
+  # Main Tail
+  p0_weight: 50.0
+  p4_weight: 0.5
+  adv_weight_m: 0.02
+  tv_weight_m: 0.001
+  d_main_weight: 0.1
+
+model:
+  ch: 32                  # Base channel size for D
+  sn: true                # Spectral Normalization in D

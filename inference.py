@@ -1,91 +1,80 @@
-import argparse
-import os
 import torch
 import cv2
+import argparse
+import os
 import numpy as np
-from net.generator import Generator
-from tools.utils import denormalize
-from torchvision import transforms
-from tqdm import tqdm
-
-
-def process_image(img, model, device):
-    # Preprocess
-    h, w = img.shape[:2]
-    # Resize to multiple of 32 for UNet/Generator
-    new_h = (h // 32) * 32
-    new_w = (w // 32) * 32
-    img_resized = cv2.resize(img, (new_w, new_h))
-
-    img_t = transforms.ToTensor()(img_resized)
-    img_t = transforms.Normalize(
-        mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])(img_t)
-    img_t = img_t.unsqueeze(0).to(device)
-
-    with torch.no_grad():
-        output = model(img_t, training=False)
-
-    output = denormalize(output.cpu()[0])
-    output = output.permute(1, 2, 0).numpy() * 255
-    output = output.astype(np.uint8)
-    output = cv2.cvtColor(output, cv2.COLOR_RGB2BGR)
-
-    # Resize back to original? Or keep? Usually keep new size or resize back.
-    # Let's resize back to original h, w
-    output = cv2.resize(output, (w, h))
-    return output
+from models.generator import Generator
 
 
 def main():
-    parser = argparse.ArgumentParser(description='AnimeGANv3 Inference')
-    parser.add_argument('--checkpoint', type=str, required=True,
-                        help='Path to generator checkpoint')
-    parser.add_argument('--source', type=str, required=True,
-                        help='Input image or directory')
-    parser.add_argument('--dest', type=str, required=True,
-                        help='Output directory')
-
+    parser = argparse.ArgumentParser(description="AnimeGANv3 Inference")
+    parser.add_argument('--checkpoint', type=str,
+                        required=True, help="Path to checkpoint file")
+    parser.add_argument('--input', type=str, required=True,
+                        help="Path to input image or directory")
+    parser.add_argument(
+        '--output', type=str, default="results/", help="Path to output directory")
     args = parser.parse_args()
 
     if torch.cuda.is_available():
         device = torch.device('cuda')
-    elif torch.backends.mps.is_available():
+        print(f"Using NVIDIA GPU: {device}")
+    elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
         device = torch.device('mps')
+        print(f"Using Apple Silicon GPU (MPS)")
     else:
         device = torch.device('cpu')
-    print(f"Device: {device}")
+        print(f"No GPU found. Using CPU")
 
-    # Load Model
-    netG = Generator().to(device)
-    checkpoint = torch.load(args.checkpoint, map_location=device)
-    netG.load_state_dict(checkpoint['model_state_dict'])
-    netG.eval()
-
-    if not os.path.exists(args.dest):
-        os.makedirs(args.dest)
-
-    if os.path.isfile(args.source):
-        files = [args.source]
-        root = os.path.dirname(args.source)
+    G = Generator(in_channels=3).to(device)
+    ckpt = torch.load(args.checkpoint, map_location=device, weights_only=True)
+    # the loaded state dict could be 'G' or just the raw model weights depending on format
+    if 'G' in ckpt:
+        G.load_state_dict(ckpt['G'])
     else:
-        files = [os.path.join(args.source, f) for f in os.listdir(
-            args.source) if f.lower().endswith(('.jpg', '.png', '.jpeg'))]
-        root = args.source
+        G.load_state_dict(ckpt)
 
-    print(f"Processing {len(files)} images...")
+    G.eval()
+    os.makedirs(args.output, exist_ok=True)
 
-    for f in tqdm(files):
-        img = cv2.imread(f)
+    def process(img_path):
+        img = cv2.imread(img_path)
         if img is None:
-            continue
+            return None
+
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
-        anime_img = process_image(img, netG, device)
+        # Preprocessing aligned with TF logic (resize to nearest 8)
+        h, w = img.shape[:2]
 
-        save_name = os.path.basename(f)
-        cv2.imwrite(os.path.join(args.dest, save_name), anime_img)
+        def to_8s(x):
+            return 256 if x < 256 else x - x % 8
+        img = cv2.resize(img, (to_8s(w), to_8s(h)))
+        img = img.astype(np.float32) / 127.5 - 1.0
 
-    print("Done.")
+        with torch.no_grad():
+            img_t = torch.from_numpy(img).permute(
+                2, 0, 1).unsqueeze(0).to(device)
+            # Only generate the main tail representation directly, save inference parameters
+            fake_m = G(img_t, inference=True)
+
+        # Denormalize mapping
+        out = (fake_m.squeeze(0).permute(1, 2, 0) + 1.0) / 2.0 * 255.0
+        out = out.clamp(0, 255).cpu().numpy().astype(np.uint8)
+        out = cv2.cvtColor(out, cv2.COLOR_RGB2BGR)
+        return out
+
+    if os.path.isdir(args.input):
+        for name in os.listdir(args.input):
+            if name.lower().endswith(('.jpg', '.png', '.jpeg')):
+                out_img = process(os.path.join(args.input, name))
+                if out_img is not None:
+                    cv2.imwrite(os.path.join(args.output, name), out_img)
+    else:
+        out_img = process(args.input)
+        if out_img is not None:
+            cv2.imwrite(os.path.join(
+                args.output, os.path.basename(args.input)), out_img)
 
 
 if __name__ == '__main__':
