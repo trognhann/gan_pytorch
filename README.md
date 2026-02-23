@@ -1,84 +1,89 @@
-# Double-Tail AnimeGANv3 (PyTorch)
+# AnimeGANv3 - PyTorch Implementation
 
-A PyTorch implementation of Double-Tail Generative Adversarial Network (DTGAN) / AnimeGANv3 for high-quality photo-to-anime conversion, optimized for human faces.
+A clean, modern, production-ready PyTorch (>= 2.1) reimplementation of AnimeGANv3. This repository was refactored strictly from the original TensorFlow 1.x codebase to reproduce identical algorithmic logic, model architectures, and custom numerical routines in PyTorch.
 
-## 1. Project Structure
-```
-AnimeGANv3/
-├── net/                # Model architecture
-│   ├── common.py       # Common blocks (LADE, Conv, etc.)
-│   ├── generator.py    # Double-tail generator
-│   └── discriminator.py # PatchGAN discriminators
-├── tools/              # Tools for data and processing
-│   ├── utils.py        # Utilities (IO, checkpoints, logging)
-│   └── edge_smooth.py  # Edge smoothing for training data
-├── utils/              # Helper functions
-├── train.py            # Main training script
-├── inference.py        # Inference script
-└── README.md           # This file
-```
+## Core Features
+- **Accurate Replication**: Features the **Double-tail Generator** (`~1.02M` parameters), `ExternalAttention_v3`, and the PathGAN discriminator with Spectral Normalization.
+- **Custom LADE Module**: Linear Adaptive Instance Denormalization matches analytical exact variance/mean extraction spatially.
+- **Precision Mathematics**: Exact translations for LAB color space loss, VGG19 feature extraction, Grayscale Gram Matrices, and LSGAN calculations natively in exact PyTorch tensors.
+- **Performance Focused**: Includes `DistributedDataParallel` (DDP) for multi-GPU training and native Mixed Precision (`torch.amp.GradScaler`). 
+- **Efficient Inference**: The inference script optimizes generator processing strictly by dropping the auxiliary support-tail processing.
+- **Cross-Platform**: Automatic device mapping. Will use **CUDA** on Linux/Windows NVIDIA cards, **MPS** on Apple Silicon Macs, and **CPU** if no accelerator is available.
 
-## 2. Environment Setup
-Prerequisites:
-- Python 3.7+
-- PyTorch 1.7+
-- Torchvision
-- OpenCV
-- NumPy
-- tqdm
-- argparse
+---
+
+## ⚙️ Installation
+
+Make sure you have an environment with **Python 3.10+** and **PyTorch >= 2.1**. Run:
 
 ```bash
-pip install torch torchvision opencv-python numpy tqdm
+pip install torch torchvision torchaudio opencv-python numpy scikit-image pyyaml tensorboard tqdm
 ```
 
-## 3. Data Preparation
-Structure your dataset as follows:
-```
-dataset/
-├── train_photo/        # Real photos (faces)
-├── anime_style/        # Anime style images
-├── anime_smooth/       # Smooth version of anime images (generated via edge_smooth.py)
-└── test/               # Test photos
+---
+
+## 📂 Project Structure
+```text
+.
+├── config.yaml          # Hyperparameters, batch size, epochs, paths, loss weights
+├── train.py             # Main DDP training loop with Mixed Precision and TensorBoard log
+├── inference.py         # Script to generate sample photos purely using the main generator tail
+├── verify.py            # Simple sanity tests on network shapes and parameter sizes (~1.02M)
+├── utils.py             # DDP bootstrap, set_seed, and auxiliary config mapping logic
+├── l0_smoothing.py      # Computes the L0 smoothing for pseudo ground-truth images
+├── models/
+│   ├── generator.py     # Double-tail Generator definitions matching ReflectPad asymmetric constraints
+│   ├── discriminator.py # Spectral Normalized PatchGAN 
+│   ├── attention.py     # Implicit 1D Convolutions -> normalized Softmax Matrix Multiplication
+│   ├── lade.py          # Spatial computation exact logic matching tf.instance_norm parameters
+│   └── guided_filter.py # Differential Guided Filter mappings
+├── losses/
+│   ├── content.py       # VGG19 L1 Content definitions
+│   ├── style.py         # Centered Grayscale Gram Matrix
+│   ├── color_lab.py     # Matrix mapped analytical differentiable RGB to LAB comparisons
+│   ├── region_smoothing.py # Superpixel comparisons mapped via VGG features
+│   └── gan_loss.py      # Independent LSGAN formulations mapping Support / Main tail
+└── datasets/
+    └── anime_dataset.py # DDP-supported Dataset loading (handles 4-channel pseudo-GT dictionaries)
 ```
 
-**Step 3.1: Generate Smooth Images**
-Run the edge smoothing script to create the `anime_smooth` dataset (helps remove noise in style images).
+---
+
+## 🏋️ Training (Train)
+
+All settings (folder roots, learning rates, iteration numbers, loss ratios) are configured in `config.yaml`. Update the `dataset_dir` parameter located in `config.yaml` to point to the directory encompassing your `train_photo` and styled databases.
+
+### Standard CPU / GPU (Automatic Inference Context)
 ```bash
-python tools/edge_smooth.py --input_dir dataset/anime_style --output_dir dataset/anime_smooth
+python train.py --config config.yaml
 ```
 
-## 4. Training
-Train the model using `train.py`. The training process includes:
-1. **Pre-training**: Initialize the generator with content loss only (optional but recommended for stability).
-2. **GAN Training**: Train both Generator and Discriminator.
-
+### Multi-GPU (Distributed Data Parallel via `torchrun`)
+To train using multiple NVIDIA GPUs, PyTorch handles parallel processes optimally:
 ```bash
-python train.py --dataset dataset --batch_size 8 --epochs 100 --checkpoint_dir checkpoints
+torchrun --nproc_per_node=<num_gpus> train.py --config config.yaml
 ```
 
-**Arguments:**
-- `--dataset`: Path to dataset root.
-- `--batch_size`: Batch size (default: 8).
-- `--epochs`: Number of epochs (default: 100).
-- `--lr`: Learning rate (default: 2e-4).
-- `--resume`: Resume from latest checkpoint (default: False).
-- `--checkpoint_dir`: Directory to save models.
-- `--log_dir`: Directory to save logs.
+Training parameters, images, and model metrics will automatically route to `logs/` (readable via TensorBoard) and model weights periodically overwrite/save inside the `checkpoint/` directory as `.pt` states.
 
-## 5. Inference
-Run inference on a single image or a folder of images.
+---
 
+## 🎨 Inference (Test)
+
+During deployment or inference, we strip away the Support Tail since it is only an auxiliary regularizing module to bound outputs for the Main Tail. `inference.py` ensures lightweight parameter invocation. 
+
+Point the input flag to either a single photo or a directory.
 ```bash
-python inference.py --checkpoint checkpoints/best_netG.pth --source test_image.jpg --dest output.jpg
+python inference.py \
+    --checkpoint checkpoint/AnimeGANv3_ep99.pt \
+    --input ./dataset/val \
+    --output ./results
 ```
 
-**Arguments:**
-- `--checkpoint`: Path to trained generator weights.
-- `--source`: Input image path or directory.
-- `--dest`: Output path or directory.
+---
 
-## 6. Model Architecture
-- **Generator**: Double-tail architecture (Support Tail & Main Tail) with External Attention.
-- **Discriminator**: Patch-level discriminators.
-- **Normalization**: Linearly Adaptive Denormalization (LADE).
+## 📝 Configuration Options (`config.yaml`)
+
+- `dataset`: Name of the Anime dataset collection (i.e `Hayao`, `Shinkai`).
+- `init_epochs` & `epochs`: Regulates when the framework pivots from initialization (content-loss only matching via Guided Filters) towards adversarial updates.
+- `checkpoint_dir` : Output parameter where the `.pt` models are saved across batches. You can manipulate this if testing on Kaggle or a cloud provider needing specific mount volumes (i.e `/kaggle/working`).

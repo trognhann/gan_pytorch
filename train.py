@@ -9,7 +9,7 @@ from torch.utils.tensorboard import SummaryWriter
 import torch.distributed as dist
 from torch.nn.parallel import DistributedDataParallel as DDP
 
-from utils import set_seed, setup_ddp, cleanup_ddp, load_config, get_seg, get_NLMean_l0, denormalize
+from utils import set_seed, setup_ddp, cleanup_ddp, load_config, denormalize
 from datasets.anime_dataset import AnimeDataset
 from models.generator import Generator
 from models.discriminator import Discriminator
@@ -112,7 +112,7 @@ def main():
             # --- Pre-training G ---
             if epoch < init_epochs:
                 optim_G_init.zero_grad()
-                with torch.cuda.amp.autocast(enabled=use_amp):
+                with torch.amp.autocast(device_type='cuda', enabled=use_amp):
                     generated_s, generated_m = G(real_photo, inference=False)
                     # Use guided filter from 0~1 domain scaled back to -1~1
                     gf_input = (generated_s + 1.0) / 2.0
@@ -137,25 +137,19 @@ def main():
                 optim_D.zero_grad()
 
                 # --- Update G ---
-                with torch.cuda.amp.autocast(enabled=use_amp):
+                with torch.amp.autocast(device_type='cuda', enabled=use_amp):
                     generated_s, generated_m = G(real_photo, inference=False)
-                    gf_input = (generated_s + 1.0) / 2.0
-                    generated = (guided_filter(
+
+                    # 1. GPU Surrogate Teacher via Guided Filter (Fast & Clean)
+                    gf_input = (generated_s.detach() + 1.0) / 2.0
+                    teacher_l0_approx = (guided_filter(
                         gf_input, gf_input, r=2, eps=0.01) * 2.0) - 1.0
 
-                # Numpy revisions
-                gen_np = generated.detach().cpu().numpy().transpose(0, 2, 3, 1)
-                gen_s_np = generated_s.detach().cpu().numpy().transpose(0, 2, 3, 1)
+                    # 2. Support Map for Loss (With Gradients)
+                    gf_input_grad = (generated_s + 1.0) / 2.0
+                    generated = (guided_filter(
+                        gf_input_grad, gf_input_grad, r=2, eps=0.01) * 2.0) - 1.0
 
-                fake_superpixel_np = get_seg(gen_np)
-                fake_NLMean_l0_np = get_NLMean_l0(gen_s_np)
-
-                fake_superpixel = torch.from_numpy(
-                    fake_superpixel_np).permute(0, 3, 1, 2).to(device)
-                fake_NLMean_l0 = torch.from_numpy(
-                    fake_NLMean_l0_np).permute(0, 3, 1, 2).to(device)
-
-                with torch.cuda.amp.autocast(enabled=use_amp):
                     def to_gray_3_ch(x):
                         gray = 0.2125 * x[:, 0:1] + 0.7154 * \
                             x[:, 1:2] + 0.0721 * x[:, 2:3]
@@ -168,14 +162,13 @@ def main():
                     fake_gray_logit = D(fake_sty_gray)
                     generated_m_logit = D(generated_m)
 
-                    # Support G Loss
+                    # --- Support G Loss ---
                     con_loss = config['loss_weights']['con_weight'] * \
                         content_loss_fn(real_photo, generated)
-                    sty_loss = sum(style_loss_fn(
-                        anime_sty_gray, fake_sty_gray))
+                    sty_loss = style_loss_fn(anime_sty_gray, fake_sty_gray)
 
-                    rs_loss = config['loss_weights']['region_smooth_weight'] * region_smooth_loss_fn(fake_superpixel, generated, 1.0) \
-                        + config['loss_weights']['vgg_region_weight'] * \
+                    # Skip get_seg() online bottleneck. Use VGG Region Loss directly
+                    rs_loss = config['loss_weights']['vgg_region_weight'] * \
                         content_loss_fn(photo_seg, generated)
 
                     color_loss = color_loss_fn(real_photo, generated)
@@ -187,13 +180,16 @@ def main():
                     G_support_loss = g_adv_loss + con_loss + \
                         sty_loss + rs_loss + color_loss + tv_loss
 
-                    # Main G Loss
+                    # --- Main G Loss ---
                     tv_loss_m = config['loss_weights']['tv_weight_m'] * \
                         gan_loss_fn.tv_loss(generated_m)
+
+                    # Replacing fake_NLMean_l0 with GPU teacher_l0_approx
                     p4_loss = config['loss_weights']['p4_weight'] * \
-                        content_loss_fn(fake_NLMean_l0, generated_m)
+                        content_loss_fn(teacher_l0_approx, generated_m)
                     p0_loss = config['loss_weights']['p0_weight'] * \
-                        l1_loss_fn(fake_NLMean_l0, generated_m)
+                        l1_loss_fn(teacher_l0_approx, generated_m)
+
                     g_m_loss = config['loss_weights']['adv_weight_m'] * \
                         gan_loss_fn.g_main_adv_loss(generated_m_logit)
 
@@ -205,7 +201,7 @@ def main():
                 scaler.update()
 
                 # --- Update D ---
-                with torch.cuda.amp.autocast(enabled=use_amp):
+                with torch.amp.autocast(device_type='cuda', enabled=use_amp):
                     fake_sty_gray_d = to_gray_3_ch(generated.detach())
                     generated_m_d = generated_m.detach()
 
@@ -213,14 +209,15 @@ def main():
                     fake_gray_logit_d = D(fake_sty_gray_d)
                     gray_anime_smooth_logit = D(gray_anime_smooth)
 
-                    fake_NLMean_logit = D(fake_NLMean_l0)
+                    # Thay fake_NLMean_l0 bằng teacher_l0_approx
+                    teacher_l0_logit = D(teacher_l0_approx.detach())
                     generated_m_logit_d = D(generated_m_d)
 
                     D_support_loss = gan_loss_fn.d_support_loss(
                         anime_gray_logit, fake_gray_logit_d, gray_anime_smooth_logit)
                     D_main_loss = config['loss_weights']['d_main_weight'] * \
                         gan_loss_fn.d_main_loss(
-                            fake_NLMean_logit, generated_m_logit_d)
+                            teacher_l0_logit, generated_m_logit_d)
 
                     Discriminator_loss = D_support_loss + D_main_loss
 

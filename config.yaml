@@ -18,7 +18,7 @@ training:
 
   # DDP and AMP
   use_amp: true           # Mixed precision
-  num_workers: 8
+  num_workers: 4
 
   # Image handling
   img_size: [256, 256]    # Training resolution [H, W]
