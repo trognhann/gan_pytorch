@@ -4,8 +4,8 @@ training:
   # General
   dataset: "Shinkai"      # Dataset name (e.g., 'Hayao', 'Shinkai')
   dataset_dir: "/kaggle/input/datasets/tronynhan/gannime-train/dataset" # Directory where datasets are stored
-  epochs: 2
-  init_epochs: 1          # Generator pre-train epochs
+  epochs: 10
+  init_epochs: 5          # Generator pre-train epochs
   batch_size: 8
   save_freq: 1            # Frequency (in epochs) to save checkpoints
   checkpoint_dir: "checkpoint"  # Directory where checkpoints are saved
