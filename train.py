@@ -18,7 +18,7 @@ from losses import AnimeGANLoss, GuidedFilter
 def main():
     parser = argparse.ArgumentParser(description='AnimeGANv3 Training')
     # ... (args unchanged)
-    parser.add_argument('--dataset', type=str, required=True,
+    parser.add_argument('--dataset', type=str, default='dataset',
                         help='Dataset root directory')
     parser.add_argument('--batch_size', type=int, default=8)
     parser.add_argument('--epochs', type=int, default=100)

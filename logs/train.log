@@ -15,3 +15,37 @@
 2026-02-12 15:05:06,570 - INFO - Starting GAN training phase...
 2026-02-12 15:05:06,572 - INFO - Training Finished.
 2026-02-12 15:57:40,570 - INFO - Starting initialization phase...
+2026-02-23 10:43:14,500 - INFO - Starting initialization phase...
+2026-02-23 10:43:33,311 - INFO - [Init] Epoch 0/5 Batch 0 Loss: 0.7432
+2026-02-23 10:43:36,092 - INFO - [Init] Epoch 0/5 Batch 1 Loss: 0.6108
+2026-02-23 10:43:39,332 - INFO - [Init] Epoch 0/5 Batch 2 Loss: 0.5780
+2026-02-23 10:43:42,864 - INFO - [Init] Epoch 0/5 Batch 3 Loss: 0.5508
+2026-02-23 10:43:46,049 - INFO - [Init] Epoch 0/5 Batch 4 Loss: 0.5218
+2026-02-23 10:43:49,426 - INFO - [Init] Epoch 0/5 Batch 5 Loss: 0.6023
+2026-02-23 10:43:53,038 - INFO - [Init] Epoch 0/5 Batch 6 Loss: 0.4933
+2026-02-23 10:43:56,542 - INFO - [Init] Epoch 0/5 Batch 7 Loss: 0.5988
+2026-02-23 10:43:59,947 - INFO - [Init] Epoch 0/5 Batch 8 Loss: 0.6112
+2026-02-23 10:44:03,894 - INFO - [Init] Epoch 0/5 Batch 9 Loss: 0.5519
+2026-02-23 10:44:07,306 - INFO - [Init] Epoch 0/5 Batch 10 Loss: 0.5587
+2026-02-23 10:44:10,690 - INFO - [Init] Epoch 0/5 Batch 11 Loss: 0.5689
+2026-02-23 10:44:14,083 - INFO - [Init] Epoch 0/5 Batch 12 Loss: 0.5140
+2026-02-23 10:44:18,055 - INFO - [Init] Epoch 0/5 Batch 13 Loss: 0.4727
+2026-02-23 10:44:22,314 - INFO - [Init] Epoch 0/5 Batch 14 Loss: 0.4942
+2026-02-23 10:44:26,166 - INFO - [Init] Epoch 0/5 Batch 15 Loss: 0.4761
+2026-02-23 10:44:29,751 - INFO - [Init] Epoch 0/5 Batch 16 Loss: 0.5270
+2026-02-23 10:44:32,804 - INFO - [Init] Epoch 0/5 Batch 17 Loss: 0.5263
+2026-02-23 10:44:35,759 - INFO - [Init] Epoch 0/5 Batch 18 Loss: 0.4584
+2026-02-23 10:44:38,885 - INFO - [Init] Epoch 0/5 Batch 19 Loss: 0.4830
+2026-02-23 10:44:42,519 - INFO - [Init] Epoch 0/5 Batch 20 Loss: 0.4907
+2026-02-23 10:44:48,008 - INFO - [Init] Epoch 0/5 Batch 21 Loss: 0.5125
+2026-02-23 10:44:51,798 - INFO - [Init] Epoch 0/5 Batch 22 Loss: 0.4401
+2026-02-23 10:44:55,746 - INFO - [Init] Epoch 0/5 Batch 23 Loss: 0.4828
+2026-02-23 10:44:59,850 - INFO - [Init] Epoch 0/5 Batch 24 Loss: 0.5495
+2026-02-23 10:45:04,513 - INFO - [Init] Epoch 0/5 Batch 25 Loss: 0.4144
+2026-02-23 10:45:09,575 - INFO - [Init] Epoch 0/5 Batch 26 Loss: 0.4935
+2026-02-23 10:45:12,663 - INFO - [Init] Epoch 0/5 Batch 27 Loss: 0.4492
+2026-02-23 10:45:16,240 - INFO - [Init] Epoch 0/5 Batch 28 Loss: 0.4733
+2026-02-23 10:45:19,998 - INFO - [Init] Epoch 0/5 Batch 29 Loss: 0.4170
+2026-02-23 11:17:08,416 - INFO - Starting initialization phase...
+2026-02-23 11:17:41,731 - INFO - [Init] Epoch 0/5 Batch 0 Loss: 0.5588
+2026-02-23 11:18:08,908 - INFO - [Init] Epoch 0/5 Batch 1 Loss: 0.5972

@@ -1,97 +1,126 @@
 import torch
 import torch.nn as nn
-from net.common import ConvBlock, ResBlock, ExternalAttention, Upsample
-
+import torch.nn.functional as F
+from net.common import ConvBlock, ExternalAttention
 
 class Generator(nn.Module):
     def __init__(self, img_ch=3):
         super(Generator, self).__init__()
 
-        # 1. Encoder (Shared)
-        # x0: (B, 32, H, W)
-        self.enc1 = ConvBlock(img_ch, 32, kernel_size=7, stride=1, padding=3)
+        # ==========================================
+        # 1. BASE ENCODER (Khớp 100% TF)
+        # ==========================================
+        # Input: (B, 3, 256, 256) -> Output: (B, 32, 256, 256)
+        self.x0_conv = ConvBlock(img_ch, 32, kernel_size=7, stride=1, padding=3)
 
-        # x1: (B, 64, H/2, W/2)
-        self.down1 = ConvBlock(32, 64, stride=2)
+        # Output: (B, 64, 128, 128)
+        self.x1_conv1 = ConvBlock(32, 32, kernel_size=3, stride=2, padding=1)
+        self.x1_conv2 = ConvBlock(32, 64, kernel_size=3, stride=1, padding=1)
 
-        # x2: (B, 128, H/4, W/4)
-        self.down2 = ConvBlock(64, 128, stride=2)
+        # Output: (B, 128, 64, 64)
+        self.x2_conv1 = ConvBlock(64, 64, kernel_size=3, stride=2, padding=1)
+        self.x2_conv2 = ConvBlock(64, 128, kernel_size=3, stride=1, padding=1)
 
-        # x3: (B, 256, H/8, W/8) - Bottleneck Input
-        self.down3 = ConvBlock(128, 256, stride=2)
+        # Output: (B, 128, 32, 32) - Điểm thắt (Bottleneck)
+        self.x3_conv1 = ConvBlock(128, 128, kernel_size=3, stride=2, padding=1)
+        self.x3_conv2 = ConvBlock(128, 128, kernel_size=3, stride=1, padding=1)
 
-        # 2. Support Tail
-        self.s_attn = ExternalAttention(256, S=64)
 
-        # Upsample 256 -> 128. Combine with x2
-        self.s_upsample1 = Upsample(256, 128)
-        self.s_up1 = ConvBlock(128, 128)
+        # ==========================================
+        # 2. SUPPORT TAIL (Khớp 100% TF)
+        # ==========================================
+        self.s_attn = ExternalAttention(128, S=64)
 
-        # Upsample 128 -> 64. Combine with x1
-        self.s_upsample2 = Upsample(128, 64)
-        self.s_up2 = ConvBlock(64, 64)
+        # 32x32 -> 64x64
+        self.s_up1_conv1 = ConvBlock(128, 128, kernel_size=3, stride=1, padding=1)
+        self.s_up1_conv2 = ConvBlock(128, 128, kernel_size=3, stride=1, padding=1)
 
-        # Upsample 64 -> 32. Combine with x0
-        self.s_upsample3 = Upsample(64, 32)
-        self.s_up3 = ConvBlock(32, 32)
+        # 64x64 -> 128x128
+        self.s_up2_conv1 = ConvBlock(128, 64, kernel_size=3, stride=1, padding=1)
+        self.s_up2_conv2 = ConvBlock(64, 64, kernel_size=3, stride=1, padding=1)
+
+        # 128x128 -> 256x256
+        self.s_up3_conv1 = ConvBlock(64, 32, kernel_size=3, stride=1, padding=1)
+        self.s_up3_conv2 = ConvBlock(32, 32, kernel_size=3, stride=1, padding=1)
 
         self.s_out = nn.Sequential(
             nn.Conv2d(32, 3, kernel_size=7, stride=1, padding=3),
             nn.Tanh()
         )
 
-        # 3. Main Tail
-        self.m_attn = ExternalAttention(256, S=64)
 
-        # Upsample 256 -> 128. Combine with x2
-        self.m_upsample1 = Upsample(256, 128)
-        self.m_up1 = ConvBlock(128, 128)
+        # ==========================================
+        # 3. MAIN TAIL (Khớp 100% TF)
+        # ==========================================
+        self.m_attn = ExternalAttention(128, S=64)
 
-        # Upsample 128 -> 64. Combine with x1
-        self.m_upsample2 = Upsample(128, 64)
-        self.m_up2 = ConvBlock(64, 64)
+        # 32x32 -> 64x64
+        self.m_up1_conv1 = ConvBlock(128, 128, kernel_size=3, stride=1, padding=1)
+        self.m_up1_conv2 = ConvBlock(128, 128, kernel_size=3, stride=1, padding=1)
 
-        # Upsample 64 -> 32. Combine with x0
-        self.m_upsample3 = Upsample(64, 32)
-        self.m_up3 = ConvBlock(32, 32)
+        # 64x64 -> 128x128
+        self.m_up2_conv1 = ConvBlock(128, 64, kernel_size=3, stride=1, padding=1)
+        self.m_up2_conv2 = ConvBlock(64, 64, kernel_size=3, stride=1, padding=1)
+
+        # 128x128 -> 256x256
+        self.m_up3_conv1 = ConvBlock(64, 32, kernel_size=3, stride=1, padding=1)
+        self.m_up3_conv2 = ConvBlock(32, 32, kernel_size=3, stride=1, padding=1)
 
         self.m_out = nn.Sequential(
             nn.Conv2d(32, 3, kernel_size=7, stride=1, padding=3),
             nn.Tanh()
         )
 
+    def upsample_bilinear(self, x):
+        # Hàm resize tương đương tf.image.resize_images
+        return F.interpolate(x, scale_factor=2, mode='bilinear', align_corners=False)
+
     def forward(self, x, training=True):
-        # Encoder
-        x0 = self.enc1(x)       # 32
-        x1 = self.down1(x0)     # 64
-        x2 = self.down2(x1)     # 128
-        x3 = self.down3(x2)     # 256
+        # --- Base Encoder ---
+        x0 = self.x0_conv(x)
 
-        # Support Tail
-        s = self.s_attn(x3)
-        s = self.s_upsample1(s)  # 256 -> 128
-        s = self.s_up1(s + x2)  # Skip x2
+        x1 = self.x1_conv1(x0)
+        x1 = self.x1_conv2(x1)
 
-        s = self.s_upsample2(s)  # 128 -> 64
-        s = self.s_up2(s + x1)  # Skip x1
+        x2 = self.x2_conv1(x1)
+        x2 = self.x2_conv2(x2)
 
-        s = self.s_upsample3(s)  # 64 -> 32
-        s = self.s_up3(s + x0)  # Skip x0
+        x3 = self.x3_conv1(x2)
+        x3 = self.x3_conv2(x3)
 
-        fake_s = self.s_out(s)
+        # --- Support Tail ---
+        s_x3 = self.s_attn(x3)
 
-        # Main Tail
-        m = self.m_attn(x3)
-        m = self.m_upsample1(m)  # 256 -> 128
-        m = self.m_up1(m + x2)  # Skip x2
+        s_x4 = self.upsample_bilinear(s_x3)
+        s_x4 = self.s_up1_conv1(s_x4)
+        s_x4 = self.s_up1_conv2(s_x4 + x2)  # Skip Connection x2
 
-        m = self.m_upsample2(m)  # 128 -> 64
-        m = self.m_up2(m + x1)  # Skip x1
+        s_x5 = self.upsample_bilinear(s_x4)
+        s_x5 = self.s_up2_conv1(s_x5)
+        s_x5 = self.s_up2_conv2(s_x5 + x1)  # Skip Connection x1
 
-        m = self.m_upsample3(m)  # 64 -> 32
-        m = self.m_up3(m + x0)  # Skip x0
+        s_x6 = self.upsample_bilinear(s_x5)
+        s_x6 = self.s_up3_conv1(s_x6)
+        s_x6 = self.s_up3_conv2(s_x6 + x0)  # Skip Connection x0
 
-        fake_m = self.m_out(m)
+        fake_s = self.s_out(s_x6)
+
+        # --- Main Tail ---
+        m_x3 = self.m_attn(x3)
+
+        m_x4 = self.upsample_bilinear(m_x3)
+        m_x4 = self.m_up1_conv1(m_x4)
+        m_x4 = self.m_up1_conv2(m_x4 + x2)  # Skip Connection x2
+
+        m_x5 = self.upsample_bilinear(m_x4)
+        m_x5 = self.m_up2_conv1(m_x5)
+        m_x5 = self.m_up2_conv2(m_x5 + x1)  # Skip Connection x1
+
+        m_x6 = self.upsample_bilinear(m_x5)
+        m_x6 = self.m_up3_conv1(m_x6)
+        m_x6 = self.m_up3_conv2(m_x6 + x0)  # Skip Connection x0
+
+        fake_m = self.m_out(m_x6)
 
         if training:
             return fake_m, fake_s
