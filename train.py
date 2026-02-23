@@ -273,6 +273,22 @@ def main():
                     writer.add_scalar(
                         "Loss/D", Discriminator_loss.item(), global_step)
 
+                if is_main_process and idx % 100 == 0:
+                    import torchvision
+                    with torch.no_grad():
+                        # Photo | Support | Teacher | Main
+                        img_grid = torch.cat([
+                            real_photo[:4],
+                            generated[:4],
+                            teacher_l0_approx[:4],
+                            generated_m[:4]
+                        ], dim=0)
+                        img_grid = (img_grid + 1.0) / 2.0
+
+                        grid = torchvision.utils.make_grid(img_grid, nrow=4)
+                        writer.add_image(
+                            'Visuals/Photo_Support_Teacher_Main', grid, global_step)
+
             global_step += 1
 
         if is_main_process and (epoch + 1) % config['training']['save_freq'] == 0:

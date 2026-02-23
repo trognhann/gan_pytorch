@@ -20,6 +20,10 @@ class StyleLoss(nn.Module):
         s2, s3, s4 = self.vgg(style)
         f2, f3, f4 = self.vgg(fake)
 
+        s2, f2 = s2.to(torch.float32), f2.to(torch.float32)
+        s3, f3 = s3.to(torch.float32), f3.to(torch.float32)
+        s4, f4 = s4.to(torch.float32), f4.to(torch.float32)
+
         s2 = s2 - s2.mean(dim=[2, 3], keepdim=True)
         f2 = f2 - f2.mean(dim=[2, 3], keepdim=True)
 

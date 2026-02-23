@@ -1,51 +1,691 @@
-2026-02-12 13:51:37,749 - INFO - Starting initialization phase...
-2026-02-12 13:53:47,135 - INFO - Starting initialization phase...
-2026-02-12 13:54:20,693 - INFO - Starting GAN training phase...
-2026-02-12 13:54:25,399 - INFO - Epoch [1/2] Step [0/11] Loss_D: 0.9440 Loss_G: 16964.6660
-2026-02-12 13:54:25,400 - INFO - Loss_G Adv: 0.9297 Loss_G Con: 1.2954 Loss_G Sty: 1.9258 Loss_G Col: 0.4331 Loss_G TV: 16941.2090
-2026-02-12 13:55:12,569 - INFO - Training Finished.
-2026-02-12 13:58:22,298 - INFO - Starting initialization phase...
-2026-02-12 13:58:55,928 - INFO - Starting GAN training phase...
-2026-02-12 13:59:00,526 - INFO - Epoch [1/3] Step [0/11] Loss_D: 1.0028 Loss_G: 3009.6311
-2026-02-12 13:59:00,527 - INFO - Loss_G Adv: 1.0124 Loss_G Con: 1.1429 Loss_G Sty: 1.1734 Loss_G Col: 0.3796 Loss_G TV: 2988.7554
-2026-02-12 13:59:51,182 - INFO - Epoch [2/3] Step [0/11] Loss_D: 0.2390 Loss_G: 1580.1465
-2026-02-12 13:59:51,182 - INFO - Loss_G Adv: 0.7069 Loss_G Con: 1.0015 Loss_G Sty: 1.1716 Loss_G Col: 0.5584 Loss_G TV: 1560.9412
-2026-02-12 14:00:37,526 - INFO - Training Finished.
-2026-02-12 15:02:09,394 - INFO - Starting initialization phase...
-2026-02-12 15:05:06,570 - INFO - Starting GAN training phase...
-2026-02-12 15:05:06,572 - INFO - Training Finished.
-2026-02-12 15:57:40,570 - INFO - Starting initialization phase...
-2026-02-23 10:43:14,500 - INFO - Starting initialization phase...
-2026-02-23 10:43:33,311 - INFO - [Init] Epoch 0/5 Batch 0 Loss: 0.7432
-2026-02-23 10:43:36,092 - INFO - [Init] Epoch 0/5 Batch 1 Loss: 0.6108
-2026-02-23 10:43:39,332 - INFO - [Init] Epoch 0/5 Batch 2 Loss: 0.5780
-2026-02-23 10:43:42,864 - INFO - [Init] Epoch 0/5 Batch 3 Loss: 0.5508
-2026-02-23 10:43:46,049 - INFO - [Init] Epoch 0/5 Batch 4 Loss: 0.5218
-2026-02-23 10:43:49,426 - INFO - [Init] Epoch 0/5 Batch 5 Loss: 0.6023
-2026-02-23 10:43:53,038 - INFO - [Init] Epoch 0/5 Batch 6 Loss: 0.4933
-2026-02-23 10:43:56,542 - INFO - [Init] Epoch 0/5 Batch 7 Loss: 0.5988
-2026-02-23 10:43:59,947 - INFO - [Init] Epoch 0/5 Batch 8 Loss: 0.6112
-2026-02-23 10:44:03,894 - INFO - [Init] Epoch 0/5 Batch 9 Loss: 0.5519
-2026-02-23 10:44:07,306 - INFO - [Init] Epoch 0/5 Batch 10 Loss: 0.5587
-2026-02-23 10:44:10,690 - INFO - [Init] Epoch 0/5 Batch 11 Loss: 0.5689
-2026-02-23 10:44:14,083 - INFO - [Init] Epoch 0/5 Batch 12 Loss: 0.5140
-2026-02-23 10:44:18,055 - INFO - [Init] Epoch 0/5 Batch 13 Loss: 0.4727
-2026-02-23 10:44:22,314 - INFO - [Init] Epoch 0/5 Batch 14 Loss: 0.4942
-2026-02-23 10:44:26,166 - INFO - [Init] Epoch 0/5 Batch 15 Loss: 0.4761
-2026-02-23 10:44:29,751 - INFO - [Init] Epoch 0/5 Batch 16 Loss: 0.5270
-2026-02-23 10:44:32,804 - INFO - [Init] Epoch 0/5 Batch 17 Loss: 0.5263
-2026-02-23 10:44:35,759 - INFO - [Init] Epoch 0/5 Batch 18 Loss: 0.4584
-2026-02-23 10:44:38,885 - INFO - [Init] Epoch 0/5 Batch 19 Loss: 0.4830
-2026-02-23 10:44:42,519 - INFO - [Init] Epoch 0/5 Batch 20 Loss: 0.4907
-2026-02-23 10:44:48,008 - INFO - [Init] Epoch 0/5 Batch 21 Loss: 0.5125
-2026-02-23 10:44:51,798 - INFO - [Init] Epoch 0/5 Batch 22 Loss: 0.4401
-2026-02-23 10:44:55,746 - INFO - [Init] Epoch 0/5 Batch 23 Loss: 0.4828
-2026-02-23 10:44:59,850 - INFO - [Init] Epoch 0/5 Batch 24 Loss: 0.5495
-2026-02-23 10:45:04,513 - INFO - [Init] Epoch 0/5 Batch 25 Loss: 0.4144
-2026-02-23 10:45:09,575 - INFO - [Init] Epoch 0/5 Batch 26 Loss: 0.4935
-2026-02-23 10:45:12,663 - INFO - [Init] Epoch 0/5 Batch 27 Loss: 0.4492
-2026-02-23 10:45:16,240 - INFO - [Init] Epoch 0/5 Batch 28 Loss: 0.4733
-2026-02-23 10:45:19,998 - INFO - [Init] Epoch 0/5 Batch 29 Loss: 0.4170
-2026-02-23 11:17:08,416 - INFO - Starting initialization phase...
-2026-02-23 11:17:41,731 - INFO - [Init] Epoch 0/5 Batch 0 Loss: 0.5588
-2026-02-23 11:18:08,908 - INFO - [Init] Epoch 0/5 Batch 1 Loss: 0.5972
+2026-02-23 09:39:01,306 - [0] Starting training...
+2026-02-23 09:39:03,558 - Epoch: 0/5 Step: 0/832 Pre_train_G_loss: 0.018603
+2026-02-23 09:39:08,589 - Epoch: 0/5 Step: 10/832 Pre_train_G_loss: 0.013862
+2026-02-23 09:39:13,621 - Epoch: 0/5 Step: 20/832 Pre_train_G_loss: 0.014078
+2026-02-23 09:39:18,646 - Epoch: 0/5 Step: 30/832 Pre_train_G_loss: 0.016591
+2026-02-23 09:39:23,665 - Epoch: 0/5 Step: 40/832 Pre_train_G_loss: 0.014049
+2026-02-23 09:39:28,680 - Epoch: 0/5 Step: 50/832 Pre_train_G_loss: 0.012617
+2026-02-23 09:39:33,698 - Epoch: 0/5 Step: 60/832 Pre_train_G_loss: 0.013491
+2026-02-23 09:39:38,714 - Epoch: 0/5 Step: 70/832 Pre_train_G_loss: 0.013397
+2026-02-23 09:39:43,736 - Epoch: 0/5 Step: 80/832 Pre_train_G_loss: 0.009393
+2026-02-23 09:39:48,750 - Epoch: 0/5 Step: 90/832 Pre_train_G_loss: 0.010605
+2026-02-23 09:39:53,761 - Epoch: 0/5 Step: 100/832 Pre_train_G_loss: 0.012454
+2026-02-23 09:39:58,770 - Epoch: 0/5 Step: 110/832 Pre_train_G_loss: 0.009529
+2026-02-23 09:40:03,777 - Epoch: 0/5 Step: 120/832 Pre_train_G_loss: 0.008840
+2026-02-23 09:40:08,789 - Epoch: 0/5 Step: 130/832 Pre_train_G_loss: 0.008684
+2026-02-23 09:40:13,802 - Epoch: 0/5 Step: 140/832 Pre_train_G_loss: 0.008600
+2026-02-23 09:40:18,819 - Epoch: 0/5 Step: 150/832 Pre_train_G_loss: 0.008488
+2026-02-23 09:40:23,836 - Epoch: 0/5 Step: 160/832 Pre_train_G_loss: 0.008906
+2026-02-23 09:40:28,854 - Epoch: 0/5 Step: 170/832 Pre_train_G_loss: 0.009346
+2026-02-23 09:40:33,880 - Epoch: 0/5 Step: 180/832 Pre_train_G_loss: 0.008317
+2026-02-23 09:40:38,899 - Epoch: 0/5 Step: 190/832 Pre_train_G_loss: 0.007458
+2026-02-23 09:40:43,920 - Epoch: 0/5 Step: 200/832 Pre_train_G_loss: 0.007558
+2026-02-23 09:40:48,928 - Epoch: 0/5 Step: 210/832 Pre_train_G_loss: 0.007839
+2026-02-23 09:40:53,941 - Epoch: 0/5 Step: 220/832 Pre_train_G_loss: 0.008037
+2026-02-23 09:40:58,955 - Epoch: 0/5 Step: 230/832 Pre_train_G_loss: 0.007617
+2026-02-23 09:41:03,972 - Epoch: 0/5 Step: 240/832 Pre_train_G_loss: 0.007457
+2026-02-23 09:41:08,987 - Epoch: 0/5 Step: 250/832 Pre_train_G_loss: 0.006421
+2026-02-23 09:41:14,006 - Epoch: 0/5 Step: 260/832 Pre_train_G_loss: 0.007946
+2026-02-23 09:41:19,021 - Epoch: 0/5 Step: 270/832 Pre_train_G_loss: 0.007197
+2026-02-23 09:41:24,031 - Epoch: 0/5 Step: 280/832 Pre_train_G_loss: 0.006596
+2026-02-23 09:41:29,041 - Epoch: 0/5 Step: 290/832 Pre_train_G_loss: 0.006780
+2026-02-23 09:41:34,055 - Epoch: 0/5 Step: 300/832 Pre_train_G_loss: 0.007420
+2026-02-23 09:41:39,071 - Epoch: 0/5 Step: 310/832 Pre_train_G_loss: 0.007204
+2026-02-23 09:41:44,087 - Epoch: 0/5 Step: 320/832 Pre_train_G_loss: 0.005679
+2026-02-23 09:41:49,111 - Epoch: 0/5 Step: 330/832 Pre_train_G_loss: 0.006571
+2026-02-23 09:41:54,126 - Epoch: 0/5 Step: 340/832 Pre_train_G_loss: 0.006071
+2026-02-23 09:41:59,140 - Epoch: 0/5 Step: 350/832 Pre_train_G_loss: 0.006775
+2026-02-23 09:42:04,149 - Epoch: 0/5 Step: 360/832 Pre_train_G_loss: 0.006227
+2026-02-23 09:42:09,166 - Epoch: 0/5 Step: 370/832 Pre_train_G_loss: 0.006442
+2026-02-23 09:42:14,179 - Epoch: 0/5 Step: 380/832 Pre_train_G_loss: 0.007916
+2026-02-23 09:42:19,195 - Epoch: 0/5 Step: 390/832 Pre_train_G_loss: 0.007689
+2026-02-23 09:42:24,216 - Epoch: 0/5 Step: 400/832 Pre_train_G_loss: 0.007119
+2026-02-23 09:42:29,230 - Epoch: 0/5 Step: 410/832 Pre_train_G_loss: 0.006382
+2026-02-23 09:42:34,246 - Epoch: 0/5 Step: 420/832 Pre_train_G_loss: 0.006067
+2026-02-23 09:42:39,252 - Epoch: 0/5 Step: 430/832 Pre_train_G_loss: 0.006259
+2026-02-23 09:42:44,265 - Epoch: 0/5 Step: 440/832 Pre_train_G_loss: 0.006017
+2026-02-23 09:42:49,278 - Epoch: 0/5 Step: 450/832 Pre_train_G_loss: 0.006125
+2026-02-23 09:42:54,286 - Epoch: 0/5 Step: 460/832 Pre_train_G_loss: 0.005412
+2026-02-23 09:42:59,307 - Epoch: 0/5 Step: 470/832 Pre_train_G_loss: 0.006021
+2026-02-23 09:43:04,322 - Epoch: 0/5 Step: 480/832 Pre_train_G_loss: 0.006616
+2026-02-23 09:43:09,336 - Epoch: 0/5 Step: 490/832 Pre_train_G_loss: 0.006117
+2026-02-23 09:43:14,349 - Epoch: 0/5 Step: 500/832 Pre_train_G_loss: 0.006446
+2026-02-23 09:43:19,370 - Epoch: 0/5 Step: 510/832 Pre_train_G_loss: 0.005583
+2026-02-23 09:43:24,382 - Epoch: 0/5 Step: 520/832 Pre_train_G_loss: 0.005302
+2026-02-23 09:43:29,398 - Epoch: 0/5 Step: 530/832 Pre_train_G_loss: 0.005556
+2026-02-23 09:43:34,413 - Epoch: 0/5 Step: 540/832 Pre_train_G_loss: 0.006029
+2026-02-23 09:43:39,419 - Epoch: 0/5 Step: 550/832 Pre_train_G_loss: 0.005818
+2026-02-23 09:43:44,426 - Epoch: 0/5 Step: 560/832 Pre_train_G_loss: 0.006038
+2026-02-23 09:43:49,438 - Epoch: 0/5 Step: 570/832 Pre_train_G_loss: 0.006149
+2026-02-23 09:43:54,449 - Epoch: 0/5 Step: 580/832 Pre_train_G_loss: 0.006512
+2026-02-23 09:43:59,466 - Epoch: 0/5 Step: 590/832 Pre_train_G_loss: 0.006044
+2026-02-23 09:44:04,478 - Epoch: 0/5 Step: 600/832 Pre_train_G_loss: 0.005703
+2026-02-23 09:44:09,495 - Epoch: 0/5 Step: 610/832 Pre_train_G_loss: 0.005314
+2026-02-23 09:44:14,507 - Epoch: 0/5 Step: 620/832 Pre_train_G_loss: 0.005004
+2026-02-23 09:44:19,518 - Epoch: 0/5 Step: 630/832 Pre_train_G_loss: 0.005468
+2026-02-23 09:44:24,527 - Epoch: 0/5 Step: 640/832 Pre_train_G_loss: 0.005740
+2026-02-23 09:44:29,542 - Epoch: 0/5 Step: 650/832 Pre_train_G_loss: 0.006036
+2026-02-23 09:44:34,553 - Epoch: 0/5 Step: 660/832 Pre_train_G_loss: 0.005637
+2026-02-23 09:44:39,564 - Epoch: 0/5 Step: 670/832 Pre_train_G_loss: 0.005726
+2026-02-23 09:44:44,576 - Epoch: 0/5 Step: 680/832 Pre_train_G_loss: 0.004891
+2026-02-23 09:44:49,589 - Epoch: 0/5 Step: 690/832 Pre_train_G_loss: 0.006075
+2026-02-23 09:44:54,606 - Epoch: 0/5 Step: 700/832 Pre_train_G_loss: 0.006340
+2026-02-23 09:44:59,618 - Epoch: 0/5 Step: 710/832 Pre_train_G_loss: 0.004843
+2026-02-23 09:45:04,632 - Epoch: 0/5 Step: 720/832 Pre_train_G_loss: 0.005742
+2026-02-23 09:45:09,643 - Epoch: 0/5 Step: 730/832 Pre_train_G_loss: 0.004486
+2026-02-23 09:45:14,653 - Epoch: 0/5 Step: 740/832 Pre_train_G_loss: 0.005468
+2026-02-23 09:45:19,663 - Epoch: 0/5 Step: 750/832 Pre_train_G_loss: 0.005503
+2026-02-23 09:45:24,675 - Epoch: 0/5 Step: 760/832 Pre_train_G_loss: 0.005577
+2026-02-23 09:45:29,685 - Epoch: 0/5 Step: 770/832 Pre_train_G_loss: 0.004956
+2026-02-23 09:45:34,691 - Epoch: 0/5 Step: 780/832 Pre_train_G_loss: 0.005302
+2026-02-23 09:45:39,708 - Epoch: 0/5 Step: 790/832 Pre_train_G_loss: 0.005748
+2026-02-23 09:45:44,720 - Epoch: 0/5 Step: 800/832 Pre_train_G_loss: 0.005116
+2026-02-23 09:45:49,738 - Epoch: 0/5 Step: 810/832 Pre_train_G_loss: 0.006533
+2026-02-23 09:45:54,752 - Epoch: 0/5 Step: 820/832 Pre_train_G_loss: 0.005218
+2026-02-23 09:45:59,759 - Epoch: 0/5 Step: 830/832 Pre_train_G_loss: 0.005545
+2026-02-23 09:46:00,374 - Saved checkpoint to checkpoint/AnimeGANv3_ep0.pt
+2026-02-23 09:46:01,150 - Epoch: 1/5 Step: 0/832 Pre_train_G_loss: 0.004767
+2026-02-23 09:46:06,154 - Epoch: 1/5 Step: 10/832 Pre_train_G_loss: 0.005508
+2026-02-23 09:46:11,167 - Epoch: 1/5 Step: 20/832 Pre_train_G_loss: 0.005222
+2026-02-23 09:46:16,179 - Epoch: 1/5 Step: 30/832 Pre_train_G_loss: 0.005209
+2026-02-23 09:46:21,192 - Epoch: 1/5 Step: 40/832 Pre_train_G_loss: 0.005574
+2026-02-23 09:46:26,213 - Epoch: 1/5 Step: 50/832 Pre_train_G_loss: 0.005261
+2026-02-23 09:46:31,229 - Epoch: 1/5 Step: 60/832 Pre_train_G_loss: 0.005048
+2026-02-23 09:46:36,249 - Epoch: 1/5 Step: 70/832 Pre_train_G_loss: 0.005647
+2026-02-23 09:46:41,272 - Epoch: 1/5 Step: 80/832 Pre_train_G_loss: 0.005017
+2026-02-23 09:46:46,284 - Epoch: 1/5 Step: 90/832 Pre_train_G_loss: 0.005428
+2026-02-23 09:46:51,303 - Epoch: 1/5 Step: 100/832 Pre_train_G_loss: 0.005121
+2026-02-23 09:46:56,320 - Epoch: 1/5 Step: 110/832 Pre_train_G_loss: 0.005016
+2026-02-23 09:47:01,337 - Epoch: 1/5 Step: 120/832 Pre_train_G_loss: 0.004579
+2026-02-23 09:47:06,357 - Epoch: 1/5 Step: 130/832 Pre_train_G_loss: 0.004964
+2026-02-23 09:47:11,375 - Epoch: 1/5 Step: 140/832 Pre_train_G_loss: 0.005483
+2026-02-23 09:47:16,389 - Epoch: 1/5 Step: 150/832 Pre_train_G_loss: 0.005581
+2026-02-23 09:47:21,406 - Epoch: 1/5 Step: 160/832 Pre_train_G_loss: 0.004676
+2026-02-23 09:47:26,420 - Epoch: 1/5 Step: 170/832 Pre_train_G_loss: 0.004657
+2026-02-23 09:47:31,435 - Epoch: 1/5 Step: 180/832 Pre_train_G_loss: 0.004403
+2026-02-23 09:47:36,455 - Epoch: 1/5 Step: 190/832 Pre_train_G_loss: 0.005242
+2026-02-23 09:47:41,472 - Epoch: 1/5 Step: 200/832 Pre_train_G_loss: 0.004158
+2026-02-23 09:47:46,485 - Epoch: 1/5 Step: 210/832 Pre_train_G_loss: 0.004876
+2026-02-23 09:47:51,498 - Epoch: 1/5 Step: 220/832 Pre_train_G_loss: 0.005099
+2026-02-23 09:47:56,517 - Epoch: 1/5 Step: 230/832 Pre_train_G_loss: 0.005142
+2026-02-23 09:48:01,533 - Epoch: 1/5 Step: 240/832 Pre_train_G_loss: 0.005040
+2026-02-23 09:48:06,545 - Epoch: 1/5 Step: 250/832 Pre_train_G_loss: 0.004664
+2026-02-23 09:48:11,564 - Epoch: 1/5 Step: 260/832 Pre_train_G_loss: 0.005053
+2026-02-23 09:48:16,579 - Epoch: 1/5 Step: 270/832 Pre_train_G_loss: 0.005046
+2026-02-23 09:48:21,589 - Epoch: 1/5 Step: 280/832 Pre_train_G_loss: 0.004609
+2026-02-23 09:48:26,603 - Epoch: 1/5 Step: 290/832 Pre_train_G_loss: 0.004813
+2026-02-23 09:48:31,618 - Epoch: 1/5 Step: 300/832 Pre_train_G_loss: 0.004957
+2026-02-23 09:48:36,629 - Epoch: 1/5 Step: 310/832 Pre_train_G_loss: 0.004851
+2026-02-23 09:48:41,647 - Epoch: 1/5 Step: 320/832 Pre_train_G_loss: 0.004381
+2026-02-23 09:48:46,659 - Epoch: 1/5 Step: 330/832 Pre_train_G_loss: 0.004519
+2026-02-23 09:48:51,683 - Epoch: 1/5 Step: 340/832 Pre_train_G_loss: 0.005608
+2026-02-23 09:48:56,705 - Epoch: 1/5 Step: 350/832 Pre_train_G_loss: 0.005033
+2026-02-23 09:49:01,721 - Epoch: 1/5 Step: 360/832 Pre_train_G_loss: 0.004686
+2026-02-23 09:49:06,734 - Epoch: 1/5 Step: 370/832 Pre_train_G_loss: 0.004123
+2026-02-23 09:49:11,744 - Epoch: 1/5 Step: 380/832 Pre_train_G_loss: 0.005165
+2026-02-23 09:49:16,754 - Epoch: 1/5 Step: 390/832 Pre_train_G_loss: 0.004852
+2026-02-23 09:49:21,768 - Epoch: 1/5 Step: 400/832 Pre_train_G_loss: 0.004642
+2026-02-23 09:49:26,779 - Epoch: 1/5 Step: 410/832 Pre_train_G_loss: 0.004514
+2026-02-23 09:49:31,791 - Epoch: 1/5 Step: 420/832 Pre_train_G_loss: 0.004611
+2026-02-23 09:49:36,807 - Epoch: 1/5 Step: 430/832 Pre_train_G_loss: 0.005000
+2026-02-23 09:49:41,825 - Epoch: 1/5 Step: 440/832 Pre_train_G_loss: 0.004856
+2026-02-23 09:49:46,839 - Epoch: 1/5 Step: 450/832 Pre_train_G_loss: 0.004327
+2026-02-23 09:49:51,846 - Epoch: 1/5 Step: 460/832 Pre_train_G_loss: 0.004853
+2026-02-23 09:49:56,858 - Epoch: 1/5 Step: 470/832 Pre_train_G_loss: 0.004522
+2026-02-23 09:50:01,870 - Epoch: 1/5 Step: 480/832 Pre_train_G_loss: 0.004872
+2026-02-23 09:50:06,881 - Epoch: 1/5 Step: 490/832 Pre_train_G_loss: 0.005707
+2026-02-23 09:50:11,902 - Epoch: 1/5 Step: 500/832 Pre_train_G_loss: 0.004914
+2026-02-23 09:50:16,917 - Epoch: 1/5 Step: 510/832 Pre_train_G_loss: 0.004580
+2026-02-23 09:50:21,936 - Epoch: 1/5 Step: 520/832 Pre_train_G_loss: 0.004145
+2026-02-23 09:50:26,952 - Epoch: 1/5 Step: 530/832 Pre_train_G_loss: 0.004542
+2026-02-23 09:50:31,961 - Epoch: 1/5 Step: 540/832 Pre_train_G_loss: 0.005076
+2026-02-23 09:50:36,969 - Epoch: 1/5 Step: 550/832 Pre_train_G_loss: 0.004835
+2026-02-23 09:50:41,978 - Epoch: 1/5 Step: 560/832 Pre_train_G_loss: 0.004286
+2026-02-23 09:50:46,992 - Epoch: 1/5 Step: 570/832 Pre_train_G_loss: 0.004100
+2026-02-23 09:50:52,003 - Epoch: 1/5 Step: 580/832 Pre_train_G_loss: 0.004462
+2026-02-23 09:50:57,018 - Epoch: 1/5 Step: 590/832 Pre_train_G_loss: 0.004245
+2026-02-23 09:51:02,031 - Epoch: 1/5 Step: 600/832 Pre_train_G_loss: 0.003887
+2026-02-23 09:51:07,045 - Epoch: 1/5 Step: 610/832 Pre_train_G_loss: 0.004694
+2026-02-23 09:51:12,060 - Epoch: 1/5 Step: 620/832 Pre_train_G_loss: 0.004619
+2026-02-23 09:51:17,076 - Epoch: 1/5 Step: 630/832 Pre_train_G_loss: 0.004463
+2026-02-23 09:51:22,087 - Epoch: 1/5 Step: 640/832 Pre_train_G_loss: 0.004538
+2026-02-23 09:51:27,105 - Epoch: 1/5 Step: 650/832 Pre_train_G_loss: 0.004890
+2026-02-23 09:51:32,121 - Epoch: 1/5 Step: 660/832 Pre_train_G_loss: 0.004326
+2026-02-23 09:51:37,139 - Epoch: 1/5 Step: 670/832 Pre_train_G_loss: 0.004809
+2026-02-23 09:51:42,152 - Epoch: 1/5 Step: 680/832 Pre_train_G_loss: 0.004478
+2026-02-23 09:51:47,170 - Epoch: 1/5 Step: 690/832 Pre_train_G_loss: 0.004148
+2026-02-23 09:51:52,183 - Epoch: 1/5 Step: 700/832 Pre_train_G_loss: 0.005027
+2026-02-23 09:51:57,199 - Epoch: 1/5 Step: 710/832 Pre_train_G_loss: 0.004664
+2026-02-23 09:52:02,211 - Epoch: 1/5 Step: 720/832 Pre_train_G_loss: 0.004828
+2026-02-23 09:52:07,227 - Epoch: 1/5 Step: 730/832 Pre_train_G_loss: 0.004429
+2026-02-23 09:52:12,239 - Epoch: 1/5 Step: 740/832 Pre_train_G_loss: 0.004369
+2026-02-23 09:52:17,258 - Epoch: 1/5 Step: 750/832 Pre_train_G_loss: 0.003956
+2026-02-23 09:52:22,274 - Epoch: 1/5 Step: 760/832 Pre_train_G_loss: 0.005062
+2026-02-23 09:52:27,291 - Epoch: 1/5 Step: 770/832 Pre_train_G_loss: 0.004280
+2026-02-23 09:52:32,310 - Epoch: 1/5 Step: 780/832 Pre_train_G_loss: 0.003986
+2026-02-23 09:52:37,327 - Epoch: 1/5 Step: 790/832 Pre_train_G_loss: 0.005020
+2026-02-23 09:52:42,345 - Epoch: 1/5 Step: 800/832 Pre_train_G_loss: 0.004126
+2026-02-23 09:52:47,359 - Epoch: 1/5 Step: 810/832 Pre_train_G_loss: 0.004519
+2026-02-23 09:52:52,373 - Epoch: 1/5 Step: 820/832 Pre_train_G_loss: 0.004318
+2026-02-23 09:52:57,378 - Epoch: 1/5 Step: 830/832 Pre_train_G_loss: 0.003908
+2026-02-23 09:52:58,004 - Saved checkpoint to checkpoint/AnimeGANv3_ep1.pt
+2026-02-23 09:52:58,769 - Epoch: 2/5 Step: 0/832 Pre_train_G_loss: 0.004097
+2026-02-23 09:53:03,777 - Epoch: 2/5 Step: 10/832 Pre_train_G_loss: 0.004235
+2026-02-23 09:53:08,795 - Epoch: 2/5 Step: 20/832 Pre_train_G_loss: 0.004571
+2026-02-23 09:53:13,810 - Epoch: 2/5 Step: 30/832 Pre_train_G_loss: 0.004657
+2026-02-23 09:53:18,828 - Epoch: 2/5 Step: 40/832 Pre_train_G_loss: 0.004430
+2026-02-23 09:53:23,840 - Epoch: 2/5 Step: 50/832 Pre_train_G_loss: 0.004273
+2026-02-23 09:53:28,856 - Epoch: 2/5 Step: 60/832 Pre_train_G_loss: 0.004587
+2026-02-23 09:53:33,871 - Epoch: 2/5 Step: 70/832 Pre_train_G_loss: 0.004184
+2026-02-23 09:53:38,885 - Epoch: 2/5 Step: 80/832 Pre_train_G_loss: 0.004754
+2026-02-23 09:53:43,904 - Epoch: 2/5 Step: 90/832 Pre_train_G_loss: 0.004250
+2026-02-23 09:53:48,915 - Epoch: 2/5 Step: 100/832 Pre_train_G_loss: 0.004288
+2026-02-23 09:53:53,933 - Epoch: 2/5 Step: 110/832 Pre_train_G_loss: 0.003822
+2026-02-23 09:53:58,944 - Epoch: 2/5 Step: 120/832 Pre_train_G_loss: 0.004687
+2026-02-23 09:54:03,954 - Epoch: 2/5 Step: 130/832 Pre_train_G_loss: 0.004301
+2026-02-23 09:54:08,966 - Epoch: 2/5 Step: 140/832 Pre_train_G_loss: 0.004210
+2026-02-23 09:54:13,982 - Epoch: 2/5 Step: 150/832 Pre_train_G_loss: 0.004490
+2026-02-23 09:54:18,999 - Epoch: 2/5 Step: 160/832 Pre_train_G_loss: 0.004546
+2026-02-23 09:54:24,018 - Epoch: 2/5 Step: 170/832 Pre_train_G_loss: 0.004636
+2026-02-23 09:54:29,034 - Epoch: 2/5 Step: 180/832 Pre_train_G_loss: 0.004299
+2026-02-23 09:54:34,050 - Epoch: 2/5 Step: 190/832 Pre_train_G_loss: 0.004231
+2026-02-23 09:54:39,067 - Epoch: 2/5 Step: 200/832 Pre_train_G_loss: 0.004287
+2026-02-23 09:54:44,075 - Epoch: 2/5 Step: 210/832 Pre_train_G_loss: 0.004355
+2026-02-23 09:54:49,087 - Epoch: 2/5 Step: 220/832 Pre_train_G_loss: 0.004209
+2026-02-23 09:54:54,107 - Epoch: 2/5 Step: 230/832 Pre_train_G_loss: 0.003863
+2026-02-23 09:54:59,120 - Epoch: 2/5 Step: 240/832 Pre_train_G_loss: 0.004337
+2026-02-23 09:55:04,138 - Epoch: 2/5 Step: 250/832 Pre_train_G_loss: 0.004195
+2026-02-23 09:55:09,148 - Epoch: 2/5 Step: 260/832 Pre_train_G_loss: 0.004344
+2026-02-23 09:55:14,153 - Epoch: 2/5 Step: 270/832 Pre_train_G_loss: 0.004039
+2026-02-23 09:55:19,163 - Epoch: 2/5 Step: 280/832 Pre_train_G_loss: 0.003966
+2026-02-23 09:55:24,173 - Epoch: 2/5 Step: 290/832 Pre_train_G_loss: 0.003955
+2026-02-23 09:55:29,187 - Epoch: 2/5 Step: 300/832 Pre_train_G_loss: 0.004101
+2026-02-23 09:55:34,207 - Epoch: 2/5 Step: 310/832 Pre_train_G_loss: 0.004658
+2026-02-23 09:55:39,222 - Epoch: 2/5 Step: 320/832 Pre_train_G_loss: 0.004554
+2026-02-23 09:55:44,236 - Epoch: 2/5 Step: 330/832 Pre_train_G_loss: 0.003937
+2026-02-23 09:55:49,256 - Epoch: 2/5 Step: 340/832 Pre_train_G_loss: 0.004764
+2026-02-23 09:55:54,273 - Epoch: 2/5 Step: 350/832 Pre_train_G_loss: 0.004756
+2026-02-23 09:55:59,284 - Epoch: 2/5 Step: 360/832 Pre_train_G_loss: 0.004178
+2026-02-23 09:56:04,300 - Epoch: 2/5 Step: 370/832 Pre_train_G_loss: 0.003663
+2026-02-23 09:56:09,317 - Epoch: 2/5 Step: 380/832 Pre_train_G_loss: 0.003861
+2026-02-23 09:56:14,331 - Epoch: 2/5 Step: 390/832 Pre_train_G_loss: 0.003636
+2026-02-23 09:56:19,346 - Epoch: 2/5 Step: 400/832 Pre_train_G_loss: 0.004531
+2026-02-23 09:56:24,363 - Epoch: 2/5 Step: 410/832 Pre_train_G_loss: 0.005178
+2026-02-23 09:56:29,384 - Epoch: 2/5 Step: 420/832 Pre_train_G_loss: 0.004065
+2026-02-23 09:56:34,404 - Epoch: 2/5 Step: 430/832 Pre_train_G_loss: 0.004034
+2026-02-23 09:56:39,423 - Epoch: 2/5 Step: 440/832 Pre_train_G_loss: 0.004370
+2026-02-23 09:56:44,435 - Epoch: 2/5 Step: 450/832 Pre_train_G_loss: 0.003662
+2026-02-23 09:56:49,452 - Epoch: 2/5 Step: 460/832 Pre_train_G_loss: 0.003950
+2026-02-23 09:56:54,465 - Epoch: 2/5 Step: 470/832 Pre_train_G_loss: 0.004673
+2026-02-23 09:56:59,483 - Epoch: 2/5 Step: 480/832 Pre_train_G_loss: 0.003675
+2026-02-23 09:57:04,497 - Epoch: 2/5 Step: 490/832 Pre_train_G_loss: 0.004108
+2026-02-23 09:57:09,508 - Epoch: 2/5 Step: 500/832 Pre_train_G_loss: 0.004236
+2026-02-23 09:57:14,522 - Epoch: 2/5 Step: 510/832 Pre_train_G_loss: 0.003649
+2026-02-23 09:57:19,537 - Epoch: 2/5 Step: 520/832 Pre_train_G_loss: 0.004651
+2026-02-23 09:57:24,552 - Epoch: 2/5 Step: 530/832 Pre_train_G_loss: 0.004471
+2026-02-23 09:57:29,566 - Epoch: 2/5 Step: 540/832 Pre_train_G_loss: 0.004926
+2026-02-23 09:57:34,576 - Epoch: 2/5 Step: 550/832 Pre_train_G_loss: 0.005035
+2026-02-23 09:57:39,586 - Epoch: 2/5 Step: 560/832 Pre_train_G_loss: 0.004067
+2026-02-23 09:57:44,595 - Epoch: 2/5 Step: 570/832 Pre_train_G_loss: 0.004006
+2026-02-23 09:57:49,609 - Epoch: 2/5 Step: 580/832 Pre_train_G_loss: 0.004432
+2026-02-23 09:57:54,622 - Epoch: 2/5 Step: 590/832 Pre_train_G_loss: 0.004388
+2026-02-23 09:57:59,638 - Epoch: 2/5 Step: 600/832 Pre_train_G_loss: 0.003452
+2026-02-23 09:58:04,654 - Epoch: 2/5 Step: 610/832 Pre_train_G_loss: 0.004682
+2026-02-23 09:58:09,663 - Epoch: 2/5 Step: 620/832 Pre_train_G_loss: 0.004672
+2026-02-23 09:58:14,681 - Epoch: 2/5 Step: 630/832 Pre_train_G_loss: 0.004255
+2026-02-23 09:58:19,697 - Epoch: 2/5 Step: 640/832 Pre_train_G_loss: 0.004168
+2026-02-23 09:58:24,714 - Epoch: 2/5 Step: 650/832 Pre_train_G_loss: 0.004443
+2026-02-23 09:58:29,726 - Epoch: 2/5 Step: 660/832 Pre_train_G_loss: 0.003997
+2026-02-23 09:58:34,739 - Epoch: 2/5 Step: 670/832 Pre_train_G_loss: 0.003364
+2026-02-23 09:58:39,749 - Epoch: 2/5 Step: 680/832 Pre_train_G_loss: 0.004848
+2026-02-23 09:58:44,761 - Epoch: 2/5 Step: 690/832 Pre_train_G_loss: 0.004458
+2026-02-23 09:58:49,781 - Epoch: 2/5 Step: 700/832 Pre_train_G_loss: 0.003756
+2026-02-23 09:58:54,793 - Epoch: 2/5 Step: 710/832 Pre_train_G_loss: 0.004713
+2026-02-23 09:58:59,804 - Epoch: 2/5 Step: 720/832 Pre_train_G_loss: 0.004270
+2026-02-23 09:59:04,811 - Epoch: 2/5 Step: 730/832 Pre_train_G_loss: 0.003542
+2026-02-23 09:59:09,826 - Epoch: 2/5 Step: 740/832 Pre_train_G_loss: 0.004055
+2026-02-23 09:59:14,841 - Epoch: 2/5 Step: 750/832 Pre_train_G_loss: 0.004221
+2026-02-23 09:59:19,859 - Epoch: 2/5 Step: 760/832 Pre_train_G_loss: 0.004480
+2026-02-23 09:59:24,872 - Epoch: 2/5 Step: 770/832 Pre_train_G_loss: 0.003959
+2026-02-23 09:59:29,893 - Epoch: 2/5 Step: 780/832 Pre_train_G_loss: 0.003719
+2026-02-23 09:59:34,907 - Epoch: 2/5 Step: 790/832 Pre_train_G_loss: 0.003763
+2026-02-23 09:59:39,915 - Epoch: 2/5 Step: 800/832 Pre_train_G_loss: 0.003953
+2026-02-23 09:59:44,938 - Epoch: 2/5 Step: 810/832 Pre_train_G_loss: 0.004153
+2026-02-23 09:59:49,953 - Epoch: 2/5 Step: 820/832 Pre_train_G_loss: 0.004458
+2026-02-23 09:59:54,962 - Epoch: 2/5 Step: 830/832 Pre_train_G_loss: 0.003524
+2026-02-23 09:59:55,578 - Saved checkpoint to checkpoint/AnimeGANv3_ep2.pt
+2026-02-23 09:59:56,340 - Epoch: 3/5 Step: 0/832 Pre_train_G_loss: 0.004039
+2026-02-23 10:00:01,364 - Epoch: 3/5 Step: 10/832 Pre_train_G_loss: 0.004353
+2026-02-23 10:00:06,373 - Epoch: 3/5 Step: 20/832 Pre_train_G_loss: 0.003672
+2026-02-23 10:00:11,395 - Epoch: 3/5 Step: 30/832 Pre_train_G_loss: 0.004472
+2026-02-23 10:00:16,411 - Epoch: 3/5 Step: 40/832 Pre_train_G_loss: 0.004389
+2026-02-23 10:00:21,420 - Epoch: 3/5 Step: 50/832 Pre_train_G_loss: 0.004070
+2026-02-23 10:00:26,431 - Epoch: 3/5 Step: 60/832 Pre_train_G_loss: 0.004039
+2026-02-23 10:00:31,444 - Epoch: 3/5 Step: 70/832 Pre_train_G_loss: 0.004095
+2026-02-23 10:00:36,456 - Epoch: 3/5 Step: 80/832 Pre_train_G_loss: 0.003872
+2026-02-23 10:00:41,469 - Epoch: 3/5 Step: 90/832 Pre_train_G_loss: 0.004149
+2026-02-23 10:00:46,483 - Epoch: 3/5 Step: 100/832 Pre_train_G_loss: 0.004018
+2026-02-23 10:00:51,493 - Epoch: 3/5 Step: 110/832 Pre_train_G_loss: 0.004029
+2026-02-23 10:00:56,504 - Epoch: 3/5 Step: 120/832 Pre_train_G_loss: 0.004248
+2026-02-23 10:01:01,516 - Epoch: 3/5 Step: 130/832 Pre_train_G_loss: 0.004241
+2026-02-23 10:01:06,534 - Epoch: 3/5 Step: 140/832 Pre_train_G_loss: 0.003946
+2026-02-23 10:01:11,546 - Epoch: 3/5 Step: 150/832 Pre_train_G_loss: 0.004005
+2026-02-23 10:01:16,562 - Epoch: 3/5 Step: 160/832 Pre_train_G_loss: 0.004235
+2026-02-23 10:01:21,582 - Epoch: 3/5 Step: 170/832 Pre_train_G_loss: 0.004078
+2026-02-23 10:01:26,593 - Epoch: 3/5 Step: 180/832 Pre_train_G_loss: 0.003729
+2026-02-23 10:01:31,605 - Epoch: 3/5 Step: 190/832 Pre_train_G_loss: 0.003703
+2026-02-23 10:01:36,617 - Epoch: 3/5 Step: 200/832 Pre_train_G_loss: 0.003928
+2026-02-23 10:01:41,631 - Epoch: 3/5 Step: 210/832 Pre_train_G_loss: 0.003746
+2026-02-23 10:01:46,643 - Epoch: 3/5 Step: 220/832 Pre_train_G_loss: 0.004056
+2026-02-23 10:01:51,661 - Epoch: 3/5 Step: 230/832 Pre_train_G_loss: 0.003730
+2026-02-23 10:01:56,681 - Epoch: 3/5 Step: 240/832 Pre_train_G_loss: 0.004316
+2026-02-23 10:02:01,688 - Epoch: 3/5 Step: 250/832 Pre_train_G_loss: 0.003840
+2026-02-23 10:02:06,703 - Epoch: 3/5 Step: 260/832 Pre_train_G_loss: 0.004108
+2026-02-23 10:02:11,712 - Epoch: 3/5 Step: 270/832 Pre_train_G_loss: 0.004183
+2026-02-23 10:02:16,732 - Epoch: 3/5 Step: 280/832 Pre_train_G_loss: 0.004506
+2026-02-23 10:02:21,743 - Epoch: 3/5 Step: 290/832 Pre_train_G_loss: 0.003253
+2026-02-23 10:02:26,755 - Epoch: 3/5 Step: 300/832 Pre_train_G_loss: 0.003457
+2026-02-23 10:02:31,771 - Epoch: 3/5 Step: 310/832 Pre_train_G_loss: 0.003655
+2026-02-23 10:02:36,783 - Epoch: 3/5 Step: 320/832 Pre_train_G_loss: 0.003708
+2026-02-23 10:02:41,797 - Epoch: 3/5 Step: 330/832 Pre_train_G_loss: 0.003081
+2026-02-23 10:02:46,808 - Epoch: 3/5 Step: 340/832 Pre_train_G_loss: 0.003434
+2026-02-23 10:02:51,820 - Epoch: 3/5 Step: 350/832 Pre_train_G_loss: 0.003613
+2026-02-23 10:02:56,831 - Epoch: 3/5 Step: 360/832 Pre_train_G_loss: 0.004353
+2026-02-23 10:03:01,844 - Epoch: 3/5 Step: 370/832 Pre_train_G_loss: 0.004399
+2026-02-23 10:03:06,859 - Epoch: 3/5 Step: 380/832 Pre_train_G_loss: 0.003756
+2026-02-23 10:03:11,877 - Epoch: 3/5 Step: 390/832 Pre_train_G_loss: 0.003858
+2026-02-23 10:03:16,894 - Epoch: 3/5 Step: 400/832 Pre_train_G_loss: 0.003724
+2026-02-23 10:03:21,906 - Epoch: 3/5 Step: 410/832 Pre_train_G_loss: 0.003798
+2026-02-23 10:03:26,916 - Epoch: 3/5 Step: 420/832 Pre_train_G_loss: 0.004385
+2026-02-23 10:03:31,930 - Epoch: 3/5 Step: 430/832 Pre_train_G_loss: 0.003647
+2026-02-23 10:03:36,943 - Epoch: 3/5 Step: 440/832 Pre_train_G_loss: 0.003934
+2026-02-23 10:03:41,965 - Epoch: 3/5 Step: 450/832 Pre_train_G_loss: 0.003944
+2026-02-23 10:03:46,974 - Epoch: 3/5 Step: 460/832 Pre_train_G_loss: 0.003682
+2026-02-23 10:03:51,989 - Epoch: 3/5 Step: 470/832 Pre_train_G_loss: 0.003985
+2026-02-23 10:03:57,000 - Epoch: 3/5 Step: 480/832 Pre_train_G_loss: 0.003901
+2026-02-23 10:04:02,016 - Epoch: 3/5 Step: 490/832 Pre_train_G_loss: 0.003883
+2026-02-23 10:04:07,031 - Epoch: 3/5 Step: 500/832 Pre_train_G_loss: 0.003430
+2026-02-23 10:04:12,043 - Epoch: 3/5 Step: 510/832 Pre_train_G_loss: 0.003656
+2026-02-23 10:04:17,054 - Epoch: 3/5 Step: 520/832 Pre_train_G_loss: 0.003446
+2026-02-23 10:04:22,072 - Epoch: 3/5 Step: 530/832 Pre_train_G_loss: 0.004552
+2026-02-23 10:04:27,088 - Epoch: 3/5 Step: 540/832 Pre_train_G_loss: 0.003864
+2026-02-23 10:04:32,103 - Epoch: 3/5 Step: 550/832 Pre_train_G_loss: 0.004032
+2026-02-23 10:04:37,117 - Epoch: 3/5 Step: 560/832 Pre_train_G_loss: 0.004210
+2026-02-23 10:04:42,135 - Epoch: 3/5 Step: 570/832 Pre_train_G_loss: 0.003842
+2026-02-23 10:04:47,147 - Epoch: 3/5 Step: 580/832 Pre_train_G_loss: 0.003584
+2026-02-23 10:04:52,161 - Epoch: 3/5 Step: 590/832 Pre_train_G_loss: 0.003929
+2026-02-23 10:04:57,176 - Epoch: 3/5 Step: 600/832 Pre_train_G_loss: 0.003702
+2026-02-23 10:05:02,187 - Epoch: 3/5 Step: 610/832 Pre_train_G_loss: 0.003517
+2026-02-23 10:05:07,201 - Epoch: 3/5 Step: 620/832 Pre_train_G_loss: 0.003514
+2026-02-23 10:05:12,218 - Epoch: 3/5 Step: 630/832 Pre_train_G_loss: 0.003796
+2026-02-23 10:05:17,231 - Epoch: 3/5 Step: 640/832 Pre_train_G_loss: 0.003525
+2026-02-23 10:05:22,246 - Epoch: 3/5 Step: 650/832 Pre_train_G_loss: 0.003392
+2026-02-23 10:05:27,257 - Epoch: 3/5 Step: 660/832 Pre_train_G_loss: 0.003523
+2026-02-23 10:05:32,271 - Epoch: 3/5 Step: 670/832 Pre_train_G_loss: 0.004022
+2026-02-23 10:05:37,287 - Epoch: 3/5 Step: 680/832 Pre_train_G_loss: 0.003468
+2026-02-23 10:05:42,295 - Epoch: 3/5 Step: 690/832 Pre_train_G_loss: 0.003484
+2026-02-23 10:05:47,307 - Epoch: 3/5 Step: 700/832 Pre_train_G_loss: 0.003676
+2026-02-23 10:05:52,319 - Epoch: 3/5 Step: 710/832 Pre_train_G_loss: 0.003948
+2026-02-23 10:05:57,332 - Epoch: 3/5 Step: 720/832 Pre_train_G_loss: 0.003747
+2026-02-23 10:06:02,355 - Epoch: 3/5 Step: 730/832 Pre_train_G_loss: 0.003673
+2026-02-23 10:06:07,374 - Epoch: 3/5 Step: 740/832 Pre_train_G_loss: 0.003314
+2026-02-23 10:06:12,386 - Epoch: 3/5 Step: 750/832 Pre_train_G_loss: 0.003479
+2026-02-23 10:06:17,408 - Epoch: 3/5 Step: 760/832 Pre_train_G_loss: 0.003558
+2026-02-23 10:06:22,423 - Epoch: 3/5 Step: 770/832 Pre_train_G_loss: 0.003458
+2026-02-23 10:06:27,441 - Epoch: 3/5 Step: 780/832 Pre_train_G_loss: 0.003879
+2026-02-23 10:06:32,459 - Epoch: 3/5 Step: 790/832 Pre_train_G_loss: 0.003984
+2026-02-23 10:06:37,476 - Epoch: 3/5 Step: 800/832 Pre_train_G_loss: 0.004192
+2026-02-23 10:06:42,491 - Epoch: 3/5 Step: 810/832 Pre_train_G_loss: 0.003469
+2026-02-23 10:06:47,508 - Epoch: 3/5 Step: 820/832 Pre_train_G_loss: 0.003846
+2026-02-23 10:06:52,521 - Epoch: 3/5 Step: 830/832 Pre_train_G_loss: 0.003859
+2026-02-23 10:06:53,130 - Saved checkpoint to checkpoint/AnimeGANv3_ep3.pt
+2026-02-23 10:06:53,940 - Epoch: 4/5 Step: 0/832 Pre_train_G_loss: 0.003635
+2026-02-23 10:06:58,950 - Epoch: 4/5 Step: 10/832 Pre_train_G_loss: 0.003753
+2026-02-23 10:07:03,959 - Epoch: 4/5 Step: 20/832 Pre_train_G_loss: 0.003612
+2026-02-23 10:07:08,970 - Epoch: 4/5 Step: 30/832 Pre_train_G_loss: 0.003570
+2026-02-23 10:07:13,988 - Epoch: 4/5 Step: 40/832 Pre_train_G_loss: 0.003528
+2026-02-23 10:07:19,000 - Epoch: 4/5 Step: 50/832 Pre_train_G_loss: 0.004032
+2026-02-23 10:07:24,018 - Epoch: 4/5 Step: 60/832 Pre_train_G_loss: 0.003290
+2026-02-23 10:07:29,028 - Epoch: 4/5 Step: 70/832 Pre_train_G_loss: 0.003368
+2026-02-23 10:07:34,045 - Epoch: 4/5 Step: 80/832 Pre_train_G_loss: 0.003388
+2026-02-23 10:07:39,058 - Epoch: 4/5 Step: 90/832 Pre_train_G_loss: 0.003392
+2026-02-23 10:07:44,067 - Epoch: 4/5 Step: 100/832 Pre_train_G_loss: 0.003487
+2026-02-23 10:07:49,080 - Epoch: 4/5 Step: 110/832 Pre_train_G_loss: 0.003833
+2026-02-23 10:07:54,091 - Epoch: 4/5 Step: 120/832 Pre_train_G_loss: 0.003709
+2026-02-23 10:07:59,104 - Epoch: 4/5 Step: 130/832 Pre_train_G_loss: 0.004253
+2026-02-23 10:08:04,113 - Epoch: 4/5 Step: 140/832 Pre_train_G_loss: 0.003363
+2026-02-23 10:08:09,126 - Epoch: 4/5 Step: 150/832 Pre_train_G_loss: 0.003873
+2026-02-23 10:08:14,138 - Epoch: 4/5 Step: 160/832 Pre_train_G_loss: 0.003840
+2026-02-23 10:08:19,152 - Epoch: 4/5 Step: 170/832 Pre_train_G_loss: 0.004129
+2026-02-23 10:08:24,163 - Epoch: 4/5 Step: 180/832 Pre_train_G_loss: 0.003581
+2026-02-23 10:08:29,177 - Epoch: 4/5 Step: 190/832 Pre_train_G_loss: 0.003968
+2026-02-23 10:08:34,184 - Epoch: 4/5 Step: 200/832 Pre_train_G_loss: 0.003637
+2026-02-23 10:08:39,197 - Epoch: 4/5 Step: 210/832 Pre_train_G_loss: 0.003402
+2026-02-23 10:08:44,214 - Epoch: 4/5 Step: 220/832 Pre_train_G_loss: 0.002985
+2026-02-23 10:08:49,229 - Epoch: 4/5 Step: 230/832 Pre_train_G_loss: 0.003600
+2026-02-23 10:08:54,246 - Epoch: 4/5 Step: 240/832 Pre_train_G_loss: 0.003238
+2026-02-23 10:08:59,257 - Epoch: 4/5 Step: 250/832 Pre_train_G_loss: 0.003678
+2026-02-23 10:09:04,264 - Epoch: 4/5 Step: 260/832 Pre_train_G_loss: 0.003884
+2026-02-23 10:09:09,281 - Epoch: 4/5 Step: 270/832 Pre_train_G_loss: 0.003539
+2026-02-23 10:09:14,293 - Epoch: 4/5 Step: 280/832 Pre_train_G_loss: 0.003149
+2026-02-23 10:09:19,303 - Epoch: 4/5 Step: 290/832 Pre_train_G_loss: 0.003161
+2026-02-23 10:09:24,321 - Epoch: 4/5 Step: 300/832 Pre_train_G_loss: 0.003352
+2026-02-23 10:09:29,337 - Epoch: 4/5 Step: 310/832 Pre_train_G_loss: 0.003671
+2026-02-23 10:09:34,347 - Epoch: 4/5 Step: 320/832 Pre_train_G_loss: 0.003139
+2026-02-23 10:09:39,367 - Epoch: 4/5 Step: 330/832 Pre_train_G_loss: 0.003305
+2026-02-23 10:09:44,379 - Epoch: 4/5 Step: 340/832 Pre_train_G_loss: 0.003367
+2026-02-23 10:09:49,397 - Epoch: 4/5 Step: 350/832 Pre_train_G_loss: 0.003473
+2026-02-23 10:09:54,415 - Epoch: 4/5 Step: 360/832 Pre_train_G_loss: 0.003749
+2026-02-23 10:09:59,425 - Epoch: 4/5 Step: 370/832 Pre_train_G_loss: 0.003632
+2026-02-23 10:10:04,447 - Epoch: 4/5 Step: 380/832 Pre_train_G_loss: 0.003518
+2026-02-23 10:10:09,460 - Epoch: 4/5 Step: 390/832 Pre_train_G_loss: 0.003521
+2026-02-23 10:10:14,474 - Epoch: 4/5 Step: 400/832 Pre_train_G_loss: 0.003346
+2026-02-23 10:10:19,487 - Epoch: 4/5 Step: 410/832 Pre_train_G_loss: 0.003156
+2026-02-23 10:10:24,505 - Epoch: 4/5 Step: 420/832 Pre_train_G_loss: 0.003711
+2026-02-23 10:10:29,515 - Epoch: 4/5 Step: 430/832 Pre_train_G_loss: 0.003353
+2026-02-23 10:10:34,525 - Epoch: 4/5 Step: 440/832 Pre_train_G_loss: 0.003389
+2026-02-23 10:10:39,531 - Epoch: 4/5 Step: 450/832 Pre_train_G_loss: 0.003633
+2026-02-23 10:10:44,548 - Epoch: 4/5 Step: 460/832 Pre_train_G_loss: 0.003705
+2026-02-23 10:10:49,568 - Epoch: 4/5 Step: 470/832 Pre_train_G_loss: 0.003553
+2026-02-23 10:10:54,584 - Epoch: 4/5 Step: 480/832 Pre_train_G_loss: 0.003353
+2026-02-23 10:10:59,595 - Epoch: 4/5 Step: 490/832 Pre_train_G_loss: 0.003337
+2026-02-23 10:11:04,609 - Epoch: 4/5 Step: 500/832 Pre_train_G_loss: 0.003619
+2026-02-23 10:11:09,625 - Epoch: 4/5 Step: 510/832 Pre_train_G_loss: 0.003095
+2026-02-23 10:11:14,635 - Epoch: 4/5 Step: 520/832 Pre_train_G_loss: 0.003909
+2026-02-23 10:11:19,655 - Epoch: 4/5 Step: 530/832 Pre_train_G_loss: 0.003277
+2026-02-23 10:11:24,672 - Epoch: 4/5 Step: 540/832 Pre_train_G_loss: 0.003374
+2026-02-23 10:11:29,686 - Epoch: 4/5 Step: 550/832 Pre_train_G_loss: 0.003987
+2026-02-23 10:11:34,698 - Epoch: 4/5 Step: 560/832 Pre_train_G_loss: 0.003710
+2026-02-23 10:11:39,710 - Epoch: 4/5 Step: 570/832 Pre_train_G_loss: 0.003552
+2026-02-23 10:11:44,721 - Epoch: 4/5 Step: 580/832 Pre_train_G_loss: 0.003427
+2026-02-23 10:11:49,734 - Epoch: 4/5 Step: 590/832 Pre_train_G_loss: 0.003068
+2026-02-23 10:11:54,745 - Epoch: 4/5 Step: 600/832 Pre_train_G_loss: 0.003016
+2026-02-23 10:11:59,758 - Epoch: 4/5 Step: 610/832 Pre_train_G_loss: 0.003348
+2026-02-23 10:12:04,770 - Epoch: 4/5 Step: 620/832 Pre_train_G_loss: 0.003479
+2026-02-23 10:12:09,781 - Epoch: 4/5 Step: 630/832 Pre_train_G_loss: 0.003600
+2026-02-23 10:12:14,802 - Epoch: 4/5 Step: 640/832 Pre_train_G_loss: 0.003505
+2026-02-23 10:12:19,819 - Epoch: 4/5 Step: 650/832 Pre_train_G_loss: 0.003018
+2026-02-23 10:12:24,834 - Epoch: 4/5 Step: 660/832 Pre_train_G_loss: 0.002851
+2026-02-23 10:12:29,846 - Epoch: 4/5 Step: 670/832 Pre_train_G_loss: 0.003297
+2026-02-23 10:12:34,858 - Epoch: 4/5 Step: 680/832 Pre_train_G_loss: 0.003210
+2026-02-23 10:12:39,869 - Epoch: 4/5 Step: 690/832 Pre_train_G_loss: 0.003410
+2026-02-23 10:12:44,885 - Epoch: 4/5 Step: 700/832 Pre_train_G_loss: 0.003649
+2026-02-23 10:12:49,895 - Epoch: 4/5 Step: 710/832 Pre_train_G_loss: 0.003166
+2026-02-23 10:12:54,917 - Epoch: 4/5 Step: 720/832 Pre_train_G_loss: 0.003448
+2026-02-23 10:12:59,932 - Epoch: 4/5 Step: 730/832 Pre_train_G_loss: 0.003107
+2026-02-23 10:13:04,946 - Epoch: 4/5 Step: 740/832 Pre_train_G_loss: 0.003510
+2026-02-23 10:13:09,957 - Epoch: 4/5 Step: 750/832 Pre_train_G_loss: 0.003373
+2026-02-23 10:13:14,964 - Epoch: 4/5 Step: 760/832 Pre_train_G_loss: 0.004016
+2026-02-23 10:13:19,977 - Epoch: 4/5 Step: 770/832 Pre_train_G_loss: 0.003496
+2026-02-23 10:13:24,985 - Epoch: 4/5 Step: 780/832 Pre_train_G_loss: 0.003045
+2026-02-23 10:13:29,996 - Epoch: 4/5 Step: 790/832 Pre_train_G_loss: 0.003303
+2026-02-23 10:13:35,009 - Epoch: 4/5 Step: 800/832 Pre_train_G_loss: 0.003541
+2026-02-23 10:13:40,015 - Epoch: 4/5 Step: 810/832 Pre_train_G_loss: 0.003593
+2026-02-23 10:13:45,023 - Epoch: 4/5 Step: 820/832 Pre_train_G_loss: 0.003214
+2026-02-23 10:13:50,034 - Epoch: 4/5 Step: 830/832 Pre_train_G_loss: 0.003407
+2026-02-23 10:13:50,642 - Saved checkpoint to checkpoint/AnimeGANv3_ep4.pt
+2026-02-23 10:13:52,085 - Epoch: 5/10 Step: 0/832
+2026-02-23 10:13:52,086 - G_loss: nan [Sup: Adv=0.8644, Con=0.0007, Sty=nan, Col=0.8562, RS=0.0016, TV=0.0000] [Main: Adv=0.0206, P0=4.8805, P4=0.0009, TV=0.0000]
+2026-02-23 10:13:52,087 - D_loss: 0.5525 [Sup=0.4508, Main=0.1017]
+2026-02-23 10:14:02,881 - Epoch: 5/10 Step: 10/832
+2026-02-23 10:14:02,881 - G_loss: nan [Sup: Adv=0.3075, Con=0.0009, Sty=nan, Col=0.9183, RS=0.0017, TV=0.0000] [Main: Adv=0.0086, P0=6.0892, P4=0.0010, TV=0.0000]
+2026-02-23 10:14:02,881 - D_loss: 0.3812 [Sup=0.3258, Main=0.0554]
+2026-02-23 10:14:13,671 - Epoch: 5/10 Step: 20/832
+2026-02-23 10:14:13,671 - G_loss: nan [Sup: Adv=0.2764, Con=0.0011, Sty=nan, Col=0.6457, RS=0.0018, TV=0.0000] [Main: Adv=0.0078, P0=3.6412, P4=0.0013, TV=0.0000]
+2026-02-23 10:14:13,671 - D_loss: 0.4162 [Sup=0.3630, Main=0.0532]
+2026-02-23 10:14:24,470 - Epoch: 5/10 Step: 30/832
+2026-02-23 10:14:24,471 - G_loss: nan [Sup: Adv=0.2840, Con=0.0011, Sty=nan, Col=0.6000, RS=0.0015, TV=0.0000] [Main: Adv=0.0081, P0=3.7798, P4=0.0013, TV=0.0000]
+2026-02-23 10:14:24,471 - D_loss: 0.4109 [Sup=0.3573, Main=0.0536]
+2026-02-23 10:14:35,262 - Epoch: 5/10 Step: 40/832
+2026-02-23 10:14:35,263 - G_loss: nan [Sup: Adv=0.2895, Con=0.0011, Sty=nan, Col=0.5438, RS=0.0017, TV=0.0000] [Main: Adv=0.0083, P0=3.6332, P4=0.0015, TV=0.0000]
+2026-02-23 10:14:35,263 - D_loss: 0.4071 [Sup=0.3535, Main=0.0536]
+2026-02-23 10:14:46,044 - Epoch: 5/10 Step: 50/832
+2026-02-23 10:14:46,045 - G_loss: nan [Sup: Adv=0.2581, Con=0.0011, Sty=nan, Col=0.5746, RS=0.0017, TV=0.0000] [Main: Adv=0.0072, P0=3.7772, P4=0.0016, TV=0.0000]
+2026-02-23 10:14:46,045 - D_loss: 0.4223 [Sup=0.3698, Main=0.0525]
+2026-02-23 10:14:56,831 - Epoch: 5/10 Step: 60/832
+2026-02-23 10:14:56,831 - G_loss: nan [Sup: Adv=0.2544, Con=0.0011, Sty=nan, Col=0.5729, RS=0.0016, TV=0.0000] [Main: Adv=0.0073, P0=3.1942, P4=0.0014, TV=0.0000]
+2026-02-23 10:14:56,831 - D_loss: 0.4312 [Sup=0.3789, Main=0.0523]
+2026-02-23 10:15:07,611 - Epoch: 5/10 Step: 70/832
+2026-02-23 10:15:07,612 - G_loss: nan [Sup: Adv=0.2724, Con=0.0011, Sty=nan, Col=0.5904, RS=0.0018, TV=0.0000] [Main: Adv=0.0078, P0=4.4957, P4=0.0018, TV=0.0000]
+2026-02-23 10:15:07,612 - D_loss: 0.4210 [Sup=0.3684, Main=0.0527]
+2026-02-23 10:15:18,401 - Epoch: 5/10 Step: 80/832
+2026-02-23 10:15:18,401 - G_loss: nan [Sup: Adv=0.2772, Con=0.0011, Sty=nan, Col=0.6288, RS=0.0016, TV=0.0000] [Main: Adv=0.0076, P0=3.5953, P4=0.0018, TV=0.0000]
+2026-02-23 10:15:18,401 - D_loss: 0.4110 [Sup=0.3585, Main=0.0525]
+2026-02-23 10:15:29,186 - Epoch: 5/10 Step: 90/832
+2026-02-23 10:15:29,186 - G_loss: nan [Sup: Adv=0.2554, Con=0.0011, Sty=nan, Col=0.7237, RS=0.0017, TV=0.0000] [Main: Adv=0.0073, P0=5.1819, P4=0.0020, TV=0.0000]
+2026-02-23 10:15:29,187 - D_loss: 0.4182 [Sup=0.3669, Main=0.0513]
+2026-02-23 10:15:39,978 - Epoch: 5/10 Step: 100/832
+2026-02-23 10:15:39,978 - G_loss: nan [Sup: Adv=0.2803, Con=0.0012, Sty=nan, Col=0.5931, RS=0.0016, TV=0.0000] [Main: Adv=0.0074, P0=3.8507, P4=0.0017, TV=0.0000]
+2026-02-23 10:15:39,978 - D_loss: 0.4090 [Sup=0.3572, Main=0.0518]
+2026-02-23 10:15:50,761 - Epoch: 5/10 Step: 110/832
+2026-02-23 10:15:50,762 - G_loss: nan [Sup: Adv=0.2484, Con=0.0010, Sty=nan, Col=0.4750, RS=0.0016, TV=0.0000] [Main: Adv=0.0063, P0=3.3249, P4=0.0018, TV=0.0000]
+2026-02-23 10:15:50,762 - D_loss: 0.4322 [Sup=0.3804, Main=0.0518]
+2026-02-23 10:16:01,548 - Epoch: 5/10 Step: 120/832
+2026-02-23 10:16:01,549 - G_loss: nan [Sup: Adv=0.3259, Con=0.0011, Sty=nan, Col=0.4965, RS=0.0017, TV=0.0000] [Main: Adv=0.0077, P0=2.8744, P4=0.0020, TV=0.0000]
+2026-02-23 10:16:01,549 - D_loss: 0.3593 [Sup=0.3079, Main=0.0515]
+2026-02-23 10:16:12,341 - Epoch: 5/10 Step: 130/832
+2026-02-23 10:16:12,341 - G_loss: nan [Sup: Adv=0.2413, Con=0.0010, Sty=nan, Col=0.4614, RS=0.0015, TV=0.0000] [Main: Adv=0.0060, P0=2.6767, P4=0.0016, TV=0.0000]
+2026-02-23 10:16:12,341 - D_loss: 0.4226 [Sup=0.3716, Main=0.0511]
+2026-02-23 10:16:23,124 - Epoch: 5/10 Step: 140/832
+2026-02-23 10:16:23,124 - G_loss: nan [Sup: Adv=0.2834, Con=0.0010, Sty=nan, Col=0.4657, RS=0.0015, TV=0.0000] [Main: Adv=0.0057, P0=2.7383, P4=0.0018, TV=0.0000]
+2026-02-23 10:16:23,124 - D_loss: 0.3968 [Sup=0.3469, Main=0.0499]
+2026-02-23 10:16:33,917 - Epoch: 5/10 Step: 150/832
+2026-02-23 10:16:33,918 - G_loss: nan [Sup: Adv=0.3298, Con=0.0010, Sty=nan, Col=0.4560, RS=0.0015, TV=0.0000] [Main: Adv=0.0067, P0=2.9410, P4=0.0017, TV=0.0000]
+2026-02-23 10:16:33,918 - D_loss: 0.3420 [Sup=0.2893, Main=0.0527]
+2026-02-23 10:16:44,704 - Epoch: 5/10 Step: 160/832
+2026-02-23 10:16:44,705 - G_loss: nan [Sup: Adv=0.1850, Con=0.0010, Sty=nan, Col=0.5553, RS=0.0017, TV=0.0000] [Main: Adv=0.0039, P0=3.7142, P4=0.0020, TV=0.0000]
+2026-02-23 10:16:44,705 - D_loss: 0.4545 [Sup=0.4042, Main=0.0503]
+2026-02-23 10:16:55,492 - Epoch: 5/10 Step: 170/832
+2026-02-23 10:16:55,493 - G_loss: nan [Sup: Adv=0.3356, Con=0.0011, Sty=nan, Col=0.5935, RS=0.0016, TV=0.0000] [Main: Adv=0.0063, P0=3.1370, P4=0.0020, TV=0.0000]
+2026-02-23 10:16:55,493 - D_loss: 0.3331 [Sup=0.2829, Main=0.0502]
+2026-02-23 10:17:06,279 - Epoch: 5/10 Step: 180/832
+2026-02-23 10:17:06,279 - G_loss: nan [Sup: Adv=0.2449, Con=0.0010, Sty=nan, Col=0.5216, RS=0.0018, TV=0.0000] [Main: Adv=0.0045, P0=3.4419, P4=0.0021, TV=0.0000]
+2026-02-23 10:17:06,279 - D_loss: 0.3970 [Sup=0.3457, Main=0.0513]
+2026-02-23 10:17:17,064 - Epoch: 5/10 Step: 190/832
+2026-02-23 10:17:17,064 - G_loss: nan [Sup: Adv=0.2213, Con=0.0012, Sty=nan, Col=0.4747, RS=0.0017, TV=0.0000] [Main: Adv=0.0046, P0=2.9369, P4=0.0021, TV=0.0000]
+2026-02-23 10:17:17,064 - D_loss: 0.4045 [Sup=0.3407, Main=0.0638]
+2026-02-23 10:17:27,852 - Epoch: 5/10 Step: 200/832
+2026-02-23 10:17:27,853 - G_loss: nan [Sup: Adv=0.1978, Con=0.0011, Sty=nan, Col=0.6088, RS=0.0016, TV=0.0000] [Main: Adv=0.0041, P0=3.9365, P4=0.0020, TV=0.0000]
+2026-02-23 10:17:27,853 - D_loss: 0.4284 [Sup=0.3809, Main=0.0476]
+2026-02-23 10:17:38,639 - Epoch: 5/10 Step: 210/832
+2026-02-23 10:17:38,640 - G_loss: nan [Sup: Adv=0.2069, Con=0.0011, Sty=nan, Col=0.4597, RS=0.0015, TV=0.0000] [Main: Adv=0.0035, P0=3.4508, P4=0.0020, TV=0.0000]
+2026-02-23 10:17:38,640 - D_loss: 0.4238 [Sup=0.3686, Main=0.0551]
+2026-02-23 10:17:49,429 - Epoch: 5/10 Step: 220/832
+2026-02-23 10:17:49,429 - G_loss: nan [Sup: Adv=0.3366, Con=0.0009, Sty=nan, Col=0.4062, RS=0.0015, TV=0.0000] [Main: Adv=0.0050, P0=2.2101, P4=0.0017, TV=0.0000]
+2026-02-23 10:17:49,430 - D_loss: 0.3127 [Sup=0.2608, Main=0.0520]
+2026-02-23 10:18:00,219 - Epoch: 5/10 Step: 230/832
+2026-02-23 10:18:00,220 - G_loss: nan [Sup: Adv=0.2195, Con=0.0011, Sty=nan, Col=0.6036, RS=0.0017, TV=0.0000] [Main: Adv=0.0063, P0=3.4429, P4=0.0023, TV=0.0000]
+2026-02-23 10:18:00,220 - D_loss: 0.3914 [Sup=0.3461, Main=0.0452]
+2026-02-23 10:18:11,013 - Epoch: 5/10 Step: 240/832
+2026-02-23 10:18:11,013 - G_loss: nan [Sup: Adv=0.2585, Con=0.0010, Sty=nan, Col=0.4560, RS=0.0016, TV=0.0000] [Main: Adv=0.0051, P0=2.7600, P4=0.0020, TV=0.0000]
+2026-02-23 10:18:11,013 - D_loss: 0.3648 [Sup=0.3131, Main=0.0517]
+2026-02-23 10:18:21,798 - Epoch: 5/10 Step: 250/832
+2026-02-23 10:18:21,798 - G_loss: nan [Sup: Adv=0.2036, Con=0.0011, Sty=nan, Col=0.5040, RS=0.0018, TV=0.0000] [Main: Adv=0.0051, P0=3.7715, P4=0.0022, TV=0.0000]
+2026-02-23 10:18:21,798 - D_loss: 0.3765 [Sup=0.3308, Main=0.0456]
+2026-02-23 10:18:32,586 - Epoch: 5/10 Step: 260/832
+2026-02-23 10:18:32,586 - G_loss: nan [Sup: Adv=0.3584, Con=0.0010, Sty=nan, Col=0.4318, RS=0.0014, TV=0.0000] [Main: Adv=0.0079, P0=2.3079, P4=0.0018, TV=0.0000]
+2026-02-23 10:18:32,586 - D_loss: 0.3274 [Sup=0.2748, Main=0.0527]
+2026-02-23 10:18:43,390 - Epoch: 5/10 Step: 270/832
+2026-02-23 10:18:43,391 - G_loss: nan [Sup: Adv=0.1741, Con=0.0011, Sty=nan, Col=0.5490, RS=0.0016, TV=0.0000] [Main: Adv=0.0032, P0=3.7668, P4=0.0021, TV=0.0000]
+2026-02-23 10:18:43,391 - D_loss: 0.4524 [Sup=0.4009, Main=0.0515]
+2026-02-23 10:18:54,179 - Epoch: 5/10 Step: 280/832
+2026-02-23 10:18:54,179 - G_loss: nan [Sup: Adv=0.2617, Con=0.0009, Sty=nan, Col=0.4914, RS=0.0017, TV=0.0000] [Main: Adv=0.0051, P0=2.6056, P4=0.0019, TV=0.0000]
+2026-02-23 10:18:54,180 - D_loss: 0.3402 [Sup=0.2903, Main=0.0499]
+2026-02-23 10:19:04,967 - Epoch: 5/10 Step: 290/832
+2026-02-23 10:19:04,968 - G_loss: nan [Sup: Adv=0.2904, Con=0.0010, Sty=nan, Col=0.4599, RS=0.0015, TV=0.0000] [Main: Adv=0.0055, P0=2.5940, P4=0.0019, TV=0.0000]
+2026-02-23 10:19:04,968 - D_loss: 0.3230 [Sup=0.2735, Main=0.0496]
+2026-02-23 10:19:15,764 - Epoch: 5/10 Step: 300/832
+2026-02-23 10:19:15,764 - G_loss: nan [Sup: Adv=0.2471, Con=0.0010, Sty=nan, Col=0.5939, RS=0.0016, TV=0.0000] [Main: Adv=0.0058, P0=2.9103, P4=0.0019, TV=0.0000]
+2026-02-23 10:19:15,764 - D_loss: 0.3843 [Sup=0.3354, Main=0.0489]
+2026-02-23 10:19:26,557 - Epoch: 5/10 Step: 310/832
+2026-02-23 10:19:26,557 - G_loss: nan [Sup: Adv=0.1801, Con=0.0011, Sty=nan, Col=0.6286, RS=0.0017, TV=0.0000] [Main: Adv=0.0042, P0=3.6264, P4=0.0023, TV=0.0000]
+2026-02-23 10:19:26,557 - D_loss: 0.3723 [Sup=0.3238, Main=0.0485]
+2026-02-23 10:19:37,346 - Epoch: 5/10 Step: 320/832
+2026-02-23 10:19:37,347 - G_loss: nan [Sup: Adv=0.1736, Con=0.0010, Sty=nan, Col=0.4828, RS=0.0017, TV=0.0000] [Main: Adv=0.0042, P0=2.9211, P4=0.0022, TV=0.0000]
+2026-02-23 10:19:37,347 - D_loss: 0.4165 [Sup=0.3679, Main=0.0487]
+2026-02-23 10:19:48,135 - Epoch: 5/10 Step: 330/832
+2026-02-23 10:19:48,135 - G_loss: nan [Sup: Adv=0.1762, Con=0.0011, Sty=nan, Col=0.4599, RS=0.0016, TV=0.0000] [Main: Adv=0.0034, P0=2.3129, P4=0.0018, TV=0.0000]
+2026-02-23 10:19:48,135 - D_loss: 0.3878 [Sup=0.3366, Main=0.0512]
+2026-02-23 10:19:58,923 - Epoch: 5/10 Step: 340/832
+2026-02-23 10:19:58,923 - G_loss: nan [Sup: Adv=0.3173, Con=0.0011, Sty=nan, Col=0.3747, RS=0.0016, TV=0.0000] [Main: Adv=0.0063, P0=2.0117, P4=0.0018, TV=0.0000]
+2026-02-23 10:19:58,923 - D_loss: 0.3386 [Sup=0.2915, Main=0.0472]
+2026-02-23 10:20:09,709 - Epoch: 5/10 Step: 350/832
+2026-02-23 10:20:09,710 - G_loss: nan [Sup: Adv=0.1317, Con=0.0011, Sty=nan, Col=0.4851, RS=0.0017, TV=0.0000] [Main: Adv=0.0026, P0=2.4369, P4=0.0020, TV=0.0000]
+2026-02-23 10:20:09,710 - D_loss: 0.3980 [Sup=0.3447, Main=0.0533]
+2026-02-23 10:20:20,493 - Epoch: 5/10 Step: 360/832
+2026-02-23 10:20:20,493 - G_loss: nan [Sup: Adv=0.2190, Con=0.0011, Sty=nan, Col=0.7206, RS=0.0016, TV=0.0000] [Main: Adv=0.0070, P0=3.4960, P4=0.0024, TV=0.0000]
+2026-02-23 10:20:20,493 - D_loss: 0.3690 [Sup=0.3168, Main=0.0522]
+2026-02-23 10:20:31,282 - Epoch: 5/10 Step: 370/832
+2026-02-23 10:20:31,283 - G_loss: nan [Sup: Adv=0.2630, Con=0.0011, Sty=nan, Col=0.5366, RS=0.0015, TV=0.0000] [Main: Adv=0.0052, P0=2.5761, P4=0.0019, TV=0.0000]
+2026-02-23 10:20:31,283 - D_loss: 0.3295 [Sup=0.2810, Main=0.0485]
+2026-02-23 10:20:42,076 - Epoch: 5/10 Step: 380/832
+2026-02-23 10:20:42,077 - G_loss: nan [Sup: Adv=0.2125, Con=0.0009, Sty=nan, Col=0.5825, RS=0.0016, TV=0.0000] [Main: Adv=0.0039, P0=3.2245, P4=0.0017, TV=0.0000]
+2026-02-23 10:20:42,077 - D_loss: 0.3593 [Sup=0.3103, Main=0.0490]
+2026-02-23 10:20:52,866 - Epoch: 5/10 Step: 390/832
+2026-02-23 10:20:52,867 - G_loss: nan [Sup: Adv=0.2297, Con=0.0009, Sty=nan, Col=0.5077, RS=0.0014, TV=0.0000] [Main: Adv=0.0046, P0=2.5313, P4=0.0016, TV=0.0000]
+2026-02-23 10:20:52,867 - D_loss: 0.3293 [Sup=0.2780, Main=0.0513]
+2026-02-23 10:21:03,658 - Epoch: 5/10 Step: 400/832
+2026-02-23 10:21:03,658 - G_loss: nan [Sup: Adv=0.3099, Con=0.0011, Sty=nan, Col=0.4737, RS=0.0017, TV=0.0000] [Main: Adv=0.0061, P0=2.7819, P4=0.0018, TV=0.0000]
+2026-02-23 10:21:03,658 - D_loss: 0.2605 [Sup=0.2117, Main=0.0488]
+2026-02-23 10:21:14,459 - Epoch: 5/10 Step: 410/832
+2026-02-23 10:21:14,460 - G_loss: nan [Sup: Adv=0.1282, Con=0.0011, Sty=nan, Col=0.5783, RS=0.0018, TV=0.0000] [Main: Adv=0.0032, P0=3.5071, P4=0.0024, TV=0.0000]
+2026-02-23 10:21:14,460 - D_loss: 0.4154 [Sup=0.3642, Main=0.0512]
+2026-02-23 10:21:25,251 - Epoch: 5/10 Step: 420/832
+2026-02-23 10:21:25,252 - G_loss: nan [Sup: Adv=0.0913, Con=0.0011, Sty=nan, Col=0.4706, RS=0.0016, TV=0.0000] [Main: Adv=0.0035, P0=2.8517, P4=0.0020, TV=0.0000]
+2026-02-23 10:21:25,252 - D_loss: 0.5665 [Sup=0.5172, Main=0.0494]
+2026-02-23 10:21:36,040 - Epoch: 5/10 Step: 430/832
+2026-02-23 10:21:36,041 - G_loss: nan [Sup: Adv=0.1767, Con=0.0011, Sty=nan, Col=0.5665, RS=0.0016, TV=0.0000] [Main: Adv=0.0047, P0=2.4264, P4=0.0019, TV=0.0000]
+2026-02-23 10:21:36,041 - D_loss: 0.3404 [Sup=0.2896, Main=0.0508]
+2026-02-23 10:21:46,827 - Epoch: 5/10 Step: 440/832
+2026-02-23 10:21:46,827 - G_loss: nan [Sup: Adv=0.1381, Con=0.0011, Sty=nan, Col=0.4387, RS=0.0014, TV=0.0000] [Main: Adv=0.0035, P0=2.3907, P4=0.0018, TV=0.0000]
+2026-02-23 10:21:46,827 - D_loss: 0.3712 [Sup=0.3203, Main=0.0509]
+2026-02-23 10:21:57,615 - Epoch: 5/10 Step: 450/832
+2026-02-23 10:21:57,616 - G_loss: nan [Sup: Adv=0.2056, Con=0.0011, Sty=nan, Col=0.6171, RS=0.0017, TV=0.0000] [Main: Adv=0.0055, P0=3.5059, P4=0.0019, TV=0.0000]
+2026-02-23 10:21:57,616 - D_loss: 0.3675 [Sup=0.3164, Main=0.0511]
+2026-02-23 10:22:08,407 - Epoch: 5/10 Step: 460/832
+2026-02-23 10:22:08,407 - G_loss: nan [Sup: Adv=0.1172, Con=0.0010, Sty=nan, Col=0.5687, RS=0.0018, TV=0.0000] [Main: Adv=0.0039, P0=3.4439, P4=0.0023, TV=0.0000]
+2026-02-23 10:22:08,407 - D_loss: 0.3837 [Sup=0.3333, Main=0.0504]
+2026-02-23 10:22:19,191 - Epoch: 5/10 Step: 470/832
+2026-02-23 10:22:19,192 - G_loss: nan [Sup: Adv=0.1889, Con=0.0013, Sty=nan, Col=0.5567, RS=0.0017, TV=0.0000] [Main: Adv=0.0051, P0=2.8583, P4=0.0022, TV=0.0000]
+2026-02-23 10:22:19,192 - D_loss: 0.3597 [Sup=0.3092, Main=0.0505]
+2026-02-23 10:22:29,981 - Epoch: 5/10 Step: 480/832
+2026-02-23 10:22:29,982 - G_loss: nan [Sup: Adv=0.1359, Con=0.0011, Sty=nan, Col=0.5174, RS=0.0016, TV=0.0000] [Main: Adv=0.0035, P0=2.9182, P4=0.0019, TV=0.0000]
+2026-02-23 10:22:29,982 - D_loss: 0.4409 [Sup=0.3897, Main=0.0512]
+2026-02-23 10:22:40,773 - Epoch: 5/10 Step: 490/832
+2026-02-23 10:22:40,773 - G_loss: nan [Sup: Adv=0.1193, Con=0.0012, Sty=nan, Col=0.4516, RS=0.0016, TV=0.0000] [Main: Adv=0.0040, P0=1.9608, P4=0.0018, TV=0.0000]
+2026-02-23 10:22:40,774 - D_loss: 0.3670 [Sup=0.3177, Main=0.0493]
+2026-02-23 10:22:51,565 - Epoch: 5/10 Step: 500/832
+2026-02-23 10:22:51,565 - G_loss: nan [Sup: Adv=0.1433, Con=0.0013, Sty=nan, Col=0.6394, RS=0.0016, TV=0.0000] [Main: Adv=0.0038, P0=3.0880, P4=0.0022, TV=0.0000]
+2026-02-23 10:22:51,565 - D_loss: 0.4248 [Sup=0.3753, Main=0.0495]
+2026-02-23 10:23:02,356 - Epoch: 5/10 Step: 510/832
+2026-02-23 10:23:02,357 - G_loss: nan [Sup: Adv=0.2110, Con=0.0011, Sty=nan, Col=0.5397, RS=0.0017, TV=0.0000] [Main: Adv=0.0043, P0=2.7698, P4=0.0018, TV=0.0000]
+2026-02-23 10:23:02,357 - D_loss: 0.3479 [Sup=0.2974, Main=0.0505]
+2026-02-23 10:23:13,146 - Epoch: 5/10 Step: 520/832
+2026-02-23 10:23:13,147 - G_loss: nan [Sup: Adv=0.1412, Con=0.0011, Sty=nan, Col=0.5303, RS=0.0016, TV=0.0000] [Main: Adv=0.0047, P0=2.9717, P4=0.0019, TV=0.0000]
+2026-02-23 10:23:13,147 - D_loss: 0.3532 [Sup=0.3046, Main=0.0487]
+2026-02-23 10:23:23,942 - Epoch: 5/10 Step: 530/832
+2026-02-23 10:23:23,943 - G_loss: nan [Sup: Adv=0.1155, Con=0.0011, Sty=nan, Col=0.5001, RS=0.0015, TV=0.0000] [Main: Adv=0.0036, P0=2.1821, P4=0.0019, TV=0.0000]
+2026-02-23 10:23:23,943 - D_loss: 0.4396 [Sup=0.3885, Main=0.0511]
+2026-02-23 10:23:34,733 - Epoch: 5/10 Step: 540/832
+2026-02-23 10:23:34,733 - G_loss: nan [Sup: Adv=0.1641, Con=0.0010, Sty=nan, Col=0.5273, RS=0.0015, TV=0.0000] [Main: Adv=0.0039, P0=2.3802, P4=0.0016, TV=0.0000]
+2026-02-23 10:23:34,733 - D_loss: 0.3328 [Sup=0.2821, Main=0.0507]
+2026-02-23 10:23:45,542 - Epoch: 5/10 Step: 550/832
+2026-02-23 10:23:45,543 - G_loss: nan [Sup: Adv=0.1153, Con=0.0011, Sty=nan, Col=0.5314, RS=0.0016, TV=0.0000] [Main: Adv=0.0040, P0=2.8166, P4=0.0018, TV=0.0000]
+2026-02-23 10:23:45,543 - D_loss: 0.5490 [Sup=0.4979, Main=0.0511]
+2026-02-23 10:23:56,333 - Epoch: 5/10 Step: 560/832
+2026-02-23 10:23:56,333 - G_loss: nan [Sup: Adv=0.1780, Con=0.0011, Sty=nan, Col=0.5166, RS=0.0016, TV=0.0000] [Main: Adv=0.0041, P0=2.6350, P4=0.0017, TV=0.0000]
+2026-02-23 10:23:56,333 - D_loss: 0.4295 [Sup=0.3806, Main=0.0489]
+2026-02-23 10:24:07,122 - Epoch: 5/10 Step: 570/832
+2026-02-23 10:24:07,122 - G_loss: nan [Sup: Adv=0.1364, Con=0.0010, Sty=nan, Col=0.5000, RS=0.0016, TV=0.0000] [Main: Adv=0.0043, P0=3.0486, P4=0.0020, TV=0.0000]
+2026-02-23 10:24:07,122 - D_loss: 0.3494 [Sup=0.2997, Main=0.0497]
+2026-02-23 10:24:17,913 - Epoch: 5/10 Step: 580/832
+2026-02-23 10:24:17,914 - G_loss: nan [Sup: Adv=0.1241, Con=0.0010, Sty=nan, Col=0.5103, RS=0.0017, TV=0.0000] [Main: Adv=0.0041, P0=2.6331, P4=0.0018, TV=0.0000]
+2026-02-23 10:24:17,914 - D_loss: 0.3697 [Sup=0.3193, Main=0.0504]
+2026-02-23 10:24:28,699 - Epoch: 5/10 Step: 590/832
+2026-02-23 10:24:28,700 - G_loss: nan [Sup: Adv=0.1314, Con=0.0012, Sty=nan, Col=0.5255, RS=0.0017, TV=0.0000] [Main: Adv=0.0047, P0=2.8819, P4=0.0019, TV=0.0000]
+2026-02-23 10:24:28,700 - D_loss: 0.3691 [Sup=0.3186, Main=0.0505]
+2026-02-23 10:24:39,491 - Epoch: 5/10 Step: 600/832
+2026-02-23 10:24:39,492 - G_loss: nan [Sup: Adv=0.1280, Con=0.0013, Sty=nan, Col=0.4972, RS=0.0015, TV=0.0000] [Main: Adv=0.0040, P0=2.2471, P4=0.0018, TV=0.0000]
+2026-02-23 10:24:39,492 - D_loss: 0.3806 [Sup=0.3305, Main=0.0502]
+2026-02-23 10:24:50,274 - Epoch: 5/10 Step: 610/832
+2026-02-23 10:24:50,274 - G_loss: nan [Sup: Adv=0.1509, Con=0.0011, Sty=nan, Col=0.5573, RS=0.0016, TV=0.0000] [Main: Adv=0.0041, P0=2.5891, P4=0.0019, TV=0.0000]
+2026-02-23 10:24:50,275 - D_loss: 0.3492 [Sup=0.2986, Main=0.0506]
+2026-02-23 10:25:01,066 - Epoch: 5/10 Step: 620/832
+2026-02-23 10:25:01,066 - G_loss: nan [Sup: Adv=0.1226, Con=0.0012, Sty=nan, Col=0.5166, RS=0.0018, TV=0.0000] [Main: Adv=0.0043, P0=3.1848, P4=0.0021, TV=0.0000]
+2026-02-23 10:25:01,066 - D_loss: 0.3742 [Sup=0.3238, Main=0.0505]
+2026-02-23 10:25:11,858 - Epoch: 5/10 Step: 630/832
+2026-02-23 10:25:11,859 - G_loss: nan [Sup: Adv=0.1319, Con=0.0011, Sty=nan, Col=0.4930, RS=0.0016, TV=0.0000] [Main: Adv=0.0041, P0=2.3004, P4=0.0018, TV=0.0000]
+2026-02-23 10:25:11,859 - D_loss: 0.3290 [Sup=0.2783, Main=0.0507]
+2026-02-23 10:25:22,641 - Epoch: 5/10 Step: 640/832
+2026-02-23 10:25:22,641 - G_loss: nan [Sup: Adv=0.1635, Con=0.0012, Sty=nan, Col=0.5020, RS=0.0018, TV=0.0000] [Main: Adv=0.0058, P0=2.9996, P4=0.0020, TV=0.0000]
+2026-02-23 10:25:22,641 - D_loss: 0.3253 [Sup=0.2733, Main=0.0520]
+2026-02-23 10:25:33,428 - Epoch: 5/10 Step: 650/832
+2026-02-23 10:25:33,428 - G_loss: nan [Sup: Adv=0.1652, Con=0.0011, Sty=nan, Col=0.5341, RS=0.0017, TV=0.0000] [Main: Adv=0.0047, P0=2.6947, P4=0.0020, TV=0.0000]
+2026-02-23 10:25:33,428 - D_loss: 0.2946 [Sup=0.2458, Main=0.0488]
+2026-02-23 10:25:44,216 - Epoch: 5/10 Step: 660/832
+2026-02-23 10:25:44,216 - G_loss: nan [Sup: Adv=0.1358, Con=0.0011, Sty=nan, Col=0.4291, RS=0.0017, TV=0.0000] [Main: Adv=0.0045, P0=2.2962, P4=0.0018, TV=0.0000]
+2026-02-23 10:25:44,216 - D_loss: 0.3109 [Sup=0.2619, Main=0.0491]
+2026-02-23 10:25:54,999 - Epoch: 5/10 Step: 670/832
+2026-02-23 10:25:55,000 - G_loss: nan [Sup: Adv=0.1279, Con=0.0011, Sty=nan, Col=0.5324, RS=0.0017, TV=0.0000] [Main: Adv=0.0048, P0=2.4566, P4=0.0019, TV=0.0000]
+2026-02-23 10:25:55,000 - D_loss: 0.4483 [Sup=0.3978, Main=0.0505]
+2026-02-23 10:26:05,780 - Epoch: 5/10 Step: 680/832
+2026-02-23 10:26:05,780 - G_loss: nan [Sup: Adv=0.2084, Con=0.0011, Sty=nan, Col=0.5434, RS=0.0015, TV=0.0000] [Main: Adv=0.0058, P0=2.8061, P4=0.0018, TV=0.0000]
+2026-02-23 10:26:05,780 - D_loss: 0.3188 [Sup=0.2700, Main=0.0488]
+2026-02-23 10:26:16,570 - Epoch: 5/10 Step: 690/832
+2026-02-23 10:26:16,571 - G_loss: nan [Sup: Adv=0.1207, Con=0.0012, Sty=nan, Col=0.4900, RS=0.0017, TV=0.0000] [Main: Adv=0.0042, P0=2.1517, P4=0.0018, TV=0.0000]
+2026-02-23 10:26:16,571 - D_loss: 0.3685 [Sup=0.3180, Main=0.0505]
+2026-02-23 10:26:27,358 - Epoch: 5/10 Step: 700/832
+2026-02-23 10:26:27,359 - G_loss: nan [Sup: Adv=0.1110, Con=0.0011, Sty=nan, Col=0.5048, RS=0.0018, TV=0.0000] [Main: Adv=0.0038, P0=2.5374, P4=0.0019, TV=0.0000]
+2026-02-23 10:26:27,359 - D_loss: 0.3540 [Sup=0.3033, Main=0.0506]
+2026-02-23 10:26:38,145 - Epoch: 5/10 Step: 710/832
+2026-02-23 10:26:38,146 - G_loss: nan [Sup: Adv=0.1199, Con=0.0014, Sty=nan, Col=0.4658, RS=0.0016, TV=0.0000] [Main: Adv=0.0041, P0=2.0279, P4=0.0017, TV=0.0000]
+2026-02-23 10:26:38,146 - D_loss: 0.3551 [Sup=0.3048, Main=0.0504]
+2026-02-23 10:26:48,933 - Epoch: 5/10 Step: 720/832
+2026-02-23 10:26:48,934 - G_loss: nan [Sup: Adv=0.1036, Con=0.0012, Sty=nan, Col=0.4805, RS=0.0015, TV=0.0000] [Main: Adv=0.0043, P0=1.9593, P4=0.0016, TV=0.0000]
+2026-02-23 10:26:48,934 - D_loss: 0.4094 [Sup=0.3588, Main=0.0506]
+2026-02-23 10:26:59,713 - Epoch: 5/10 Step: 730/832
+2026-02-23 10:26:59,713 - G_loss: nan [Sup: Adv=0.1202, Con=0.0011, Sty=nan, Col=0.4642, RS=0.0018, TV=0.0000] [Main: Adv=0.0041, P0=2.5726, P4=0.0017, TV=0.0000]
+2026-02-23 10:26:59,713 - D_loss: 0.3270 [Sup=0.2768, Main=0.0503]
+2026-02-23 10:27:10,501 - Epoch: 5/10 Step: 740/832
+2026-02-23 10:27:10,501 - G_loss: nan [Sup: Adv=0.1275, Con=0.0011, Sty=nan, Col=0.6098, RS=0.0018, TV=0.0000] [Main: Adv=0.0045, P0=3.4931, P4=0.0020, TV=0.0000]
+2026-02-23 10:27:10,501 - D_loss: 0.3333 [Sup=0.2845, Main=0.0488]
+2026-02-23 10:27:21,284 - Epoch: 5/10 Step: 750/832
+2026-02-23 10:27:21,284 - G_loss: nan [Sup: Adv=0.1098, Con=0.0012, Sty=nan, Col=0.5431, RS=0.0018, TV=0.0000] [Main: Adv=0.0042, P0=2.3540, P4=0.0018, TV=0.0000]
+2026-02-23 10:27:21,284 - D_loss: 0.3675 [Sup=0.3189, Main=0.0486]
+2026-02-23 10:27:32,068 - Epoch: 5/10 Step: 760/832
+2026-02-23 10:27:32,068 - G_loss: nan [Sup: Adv=0.1269, Con=0.0012, Sty=nan, Col=0.5449, RS=0.0018, TV=0.0000] [Main: Adv=0.0050, P0=2.5697, P4=0.0018, TV=0.0000]
+2026-02-23 10:27:32,068 - D_loss: 0.3033 [Sup=0.2559, Main=0.0475]
+2026-02-23 10:27:42,857 - Epoch: 5/10 Step: 770/832
+2026-02-23 10:27:42,857 - G_loss: nan [Sup: Adv=0.1176, Con=0.0011, Sty=nan, Col=0.4546, RS=0.0017, TV=0.0000] [Main: Adv=0.0045, P0=2.4800, P4=0.0016, TV=0.0000]
+2026-02-23 10:27:42,857 - D_loss: 0.3403 [Sup=0.2898, Main=0.0505]
+2026-02-23 10:27:53,647 - Epoch: 5/10 Step: 780/832
+2026-02-23 10:27:53,647 - G_loss: nan [Sup: Adv=0.1462, Con=0.0011, Sty=nan, Col=0.5865, RS=0.0017, TV=0.0000] [Main: Adv=0.0035, P0=3.0467, P4=0.0018, TV=0.0000]
+2026-02-23 10:27:53,647 - D_loss: 0.3253 [Sup=0.2743, Main=0.0510]
+2026-02-23 10:28:04,446 - Epoch: 5/10 Step: 790/832
+2026-02-23 10:28:04,446 - G_loss: nan [Sup: Adv=0.1129, Con=0.0011, Sty=nan, Col=0.4467, RS=0.0017, TV=0.0000] [Main: Adv=0.0037, P0=2.2983, P4=0.0016, TV=0.0000]
+2026-02-23 10:28:04,446 - D_loss: 0.3715 [Sup=0.3203, Main=0.0512]
+2026-02-23 10:28:15,237 - Epoch: 5/10 Step: 800/832
+2026-02-23 10:28:15,238 - G_loss: nan [Sup: Adv=0.1239, Con=0.0011, Sty=nan, Col=0.4991, RS=0.0016, TV=0.0000] [Main: Adv=0.0038, P0=2.2512, P4=0.0016, TV=0.0000]
+2026-02-23 10:28:15,238 - D_loss: 0.3812 [Sup=0.3301, Main=0.0511]
+2026-02-23 10:28:26,020 - Epoch: 5/10 Step: 810/832
+2026-02-23 10:28:26,020 - G_loss: nan [Sup: Adv=0.1198, Con=0.0012, Sty=nan, Col=0.4963, RS=0.0018, TV=0.0000] [Main: Adv=0.0041, P0=2.4826, P4=0.0017, TV=0.0000]
+2026-02-23 10:28:26,021 - D_loss: 0.4162 [Sup=0.3655, Main=0.0507]
+2026-02-23 10:28:36,807 - Epoch: 5/10 Step: 820/832
+2026-02-23 10:28:36,807 - G_loss: nan [Sup: Adv=0.1062, Con=0.0011, Sty=nan, Col=0.4455, RS=0.0016, TV=0.0000] [Main: Adv=0.0037, P0=2.0466, P4=0.0014, TV=0.0000]
+2026-02-23 10:28:36,807 - D_loss: 0.3554 [Sup=0.3044, Main=0.0510]
+2026-02-23 10:28:47,585 - Epoch: 5/10 Step: 830/832
+2026-02-23 10:28:47,586 - G_loss: nan [Sup: Adv=0.0863, Con=0.0010, Sty=nan, Col=0.4574, RS=0.0016, TV=0.0000] [Main: Adv=0.0031, P0=2.2852, P4=0.0014, TV=0.0000]
+2026-02-23 10:28:47,586 - D_loss: 0.3864 [Sup=0.3348, Main=0.0516]
+2026-02-23 10:28:48,819 - Saved checkpoint to checkpoint/AnimeGANv3_ep5.pt
+2026-02-23 10:28:50,199 - Epoch: 6/10 Step: 0/832
+2026-02-23 10:28:50,200 - G_loss: nan [Sup: Adv=0.1448, Con=0.0010, Sty=nan, Col=0.5034, RS=0.0017, TV=0.0000] [Main: Adv=0.0050, P0=2.7995, P4=0.0017, TV=0.0000]
+2026-02-23 10:28:50,200 - D_loss: 0.3300 [Sup=0.2793, Main=0.0508]
+2026-02-23 10:29:00,990 - Epoch: 6/10 Step: 10/832
+2026-02-23 10:29:00,990 - G_loss: nan [Sup: Adv=0.1092, Con=0.0011, Sty=nan, Col=0.4560, RS=0.0015, TV=0.0000] [Main: Adv=0.0043, P0=1.4162, P4=0.0012, TV=0.0000]
+2026-02-23 10:29:00,990 - D_loss: 0.3689 [Sup=0.3184, Main=0.0505]
+2026-02-23 10:29:11,779 - Epoch: 6/10 Step: 20/832
+2026-02-23 10:29:11,780 - G_loss: nan [Sup: Adv=0.1030, Con=0.0011, Sty=nan, Col=0.5523, RS=0.0016, TV=0.0000] [Main: Adv=0.0050, P0=2.4553, P4=0.0016, TV=0.0000]
+2026-02-23 10:29:11,780 - D_loss: 0.3733 [Sup=0.3257, Main=0.0475]
+2026-02-23 10:29:22,567 - Epoch: 6/10 Step: 30/832
+2026-02-23 10:29:22,568 - G_loss: nan [Sup: Adv=0.0973, Con=0.0011, Sty=nan, Col=0.4909, RS=0.0017, TV=0.0000] [Main: Adv=0.0035, P0=2.0901, P4=0.0015, TV=0.0000]
+2026-02-23 10:29:22,568 - D_loss: 0.3576 [Sup=0.3063, Main=0.0513]

@@ -9,8 +9,8 @@ from models.generator import Generator
 def main():
     parser = argparse.ArgumentParser(description="AnimeGANv3 Inference")
     parser.add_argument('--checkpoint', type=str,
-                        required=True, help="Path to checkpoint file")
-    parser.add_argument('--input', type=str, required=True,
+                        default="checkpoints/AnimeGANv3_ep5.pt", help="Path to checkpoint file")
+    parser.add_argument('--input', type=str, default="test_image.png",
                         help="Path to input image or directory")
     parser.add_argument(
         '--output', type=str, default="results/", help="Path to output directory")
