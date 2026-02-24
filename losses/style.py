@@ -37,10 +37,10 @@ class StyleLoss(nn.Module):
             f4 = f4 - f4.mean(dim=[2, 3], keepdim=True)
 
             l2 = self.weights[0] * self.l1(self.gram_matrix(s2),
-                                           self.gram_matrix(f2)) / s2.size(1)
+                                           self.gram_matrix(f2))
             l3 = self.weights[1] * self.l1(self.gram_matrix(s3),
-                                           self.gram_matrix(f3)) / s3.size(1)
+                                           self.gram_matrix(f3))
             l4 = self.weights[2] * self.l1(self.gram_matrix(s4),
-                                           self.gram_matrix(f4)) / s4.size(1)
+                                           self.gram_matrix(f4))
 
         return l2 + l3 + l4
