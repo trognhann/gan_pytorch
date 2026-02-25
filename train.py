@@ -99,6 +99,7 @@ def main():
 
     # Shared VGG19 feature extractor (~80MB) — avoids 3 redundant copies
     vgg = VGG19().to(device)
+    vgg.eval()  # Fixed feature extractor: disable dropout/batchnorm updates
     content_loss_fn = ContentLoss(vgg=vgg).to(device)
     style_loss_fn = StyleLoss(
         weights=config['loss_weights']['sty_weight'], vgg=vgg).to(device)
