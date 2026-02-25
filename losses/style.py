@@ -4,9 +4,9 @@ from .vgg import VGG19
 
 
 class StyleLoss(nn.Module):
-    def __init__(self, weights=[0.1, 5.0, 25.0]):
+    def __init__(self, weights=[0.1, 5.0, 25.0], vgg=None):
         super(StyleLoss, self).__init__()
-        self.vgg = VGG19()
+        self.vgg = vgg if vgg is not None else VGG19()
         self.weights = weights
         self.l1 = nn.L1Loss()
 

@@ -4,9 +4,9 @@ from .vgg import VGG19
 
 
 class ContentLoss(nn.Module):
-    def __init__(self):
+    def __init__(self, vgg=None):
         super(ContentLoss, self).__init__()
-        self.vgg = VGG19()
+        self.vgg = vgg if vgg is not None else VGG19()
         self.l1 = nn.L1Loss()
 
     def forward(self, real, fake):

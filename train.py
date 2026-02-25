@@ -15,10 +15,10 @@ from datasets.anime_dataset import AnimeDataset
 from models.generator import Generator
 from models.discriminator import Discriminator
 from models.guided_filter import guided_filter
+from losses.vgg import VGG19
 from losses.content import ContentLoss
 from losses.style import StyleLoss
 from losses.color_lab import ColorLoss
-from losses.region_smoothing import RegionSmoothingLoss
 from losses.gan_loss import GANLoss
 
 
@@ -65,12 +65,16 @@ def main():
         return
 
     G = Generator(in_channels=3).to(device)
-    D = Discriminator(
+    # Paper: two separate discriminators — D_s for support tail, D_m for main tail
+    D_s = Discriminator(
+        in_channels=3, ch=config['model']['ch'], sn=config['model']['sn']).to(device)
+    D_m = Discriminator(
         in_channels=3, ch=config['model']['ch'], sn=config['model']['sn']).to(device)
 
     if world_size > 1:
         G = DDP(G, device_ids=[local_rank], output_device=local_rank)
-        D = DDP(D, device_ids=[local_rank], output_device=local_rank)
+        D_s = DDP(D_s, device_ids=[local_rank], output_device=local_rank)
+        D_m = DDP(D_m, device_ids=[local_rank], output_device=local_rank)
 
     G_net = G.module if isinstance(G, DDP) else G
 
@@ -78,15 +82,18 @@ def main():
     ), lr=config['training']['init_lr'], betas=tuple(config['training']['adam_betas']))
     optim_G = optim.Adam(G.parameters(), lr=config['training']['g_lr'], betas=tuple(
         config['training']['adam_betas']))
-    optim_D = optim.Adam(D.parameters(), lr=config['training']['d_lr'], betas=tuple(
+    optim_D_s = optim.Adam(D_s.parameters(), lr=config['training']['d_lr'], betas=tuple(
+        config['training']['adam_betas']))
+    optim_D_m = optim.Adam(D_m.parameters(), lr=config['training']['d_lr'], betas=tuple(
         config['training']['adam_betas']))
 
-    content_loss_fn = ContentLoss().to(device)
+    # Shared VGG19 feature extractor (~80MB) — avoids 3 redundant copies
+    vgg = VGG19().to(device)
+    content_loss_fn = ContentLoss(vgg=vgg).to(device)
     style_loss_fn = StyleLoss(
-        weights=config['loss_weights']['sty_weight']).to(device)
+        weights=config['loss_weights']['sty_weight'], vgg=vgg).to(device)
     color_loss_fn = ColorLoss(
         weight=config['loss_weights']['color_weight']).to(device)
-    region_smooth_loss_fn = RegionSmoothingLoss().to(device)
     gan_loss_fn = GANLoss().to(device)
     l1_loss_fn = nn.L1Loss().to(device)
 
@@ -118,9 +125,22 @@ def main():
             logger.info(f"Loading checkpoint '{args.resume}'")
         ckpt = torch.load(args.resume, map_location=device)
         G_net.load_state_dict(ckpt['G'])
-        (D.module if isinstance(D, DDP) else D).load_state_dict(ckpt['D'])
+        # Support dual-D checkpoints and legacy single-D checkpoints
+        if 'D_s' in ckpt:
+            (D_s.module if isinstance(D_s, DDP)
+             else D_s).load_state_dict(ckpt['D_s'])
+            (D_m.module if isinstance(D_m, DDP)
+             else D_m).load_state_dict(ckpt['D_m'])
+            optim_D_s.load_state_dict(ckpt['optim_D_s'])
+            optim_D_m.load_state_dict(ckpt['optim_D_m'])
+        elif 'D' in ckpt:
+            logger.info(
+                "Legacy checkpoint detected: loading single D into both D_s and D_m")
+            (D_s.module if isinstance(D_s, DDP)
+             else D_s).load_state_dict(ckpt['D'])
+            (D_m.module if isinstance(D_m, DDP)
+             else D_m).load_state_dict(ckpt['D'])
         optim_G.load_state_dict(ckpt['optim_G'])
-        optim_D.load_state_dict(ckpt['optim_D'])
         if 'optim_G_init' in ckpt:
             optim_G_init.load_state_dict(ckpt['optim_G_init'])
         if 'scaler' in ckpt and ckpt['scaler'] is not None and use_amp:
@@ -169,7 +189,6 @@ def main():
             else:
                 # --- Adversarial Training ---
                 optim_G.zero_grad()
-                optim_D.zero_grad()
 
                 # --- Update G ---
                 with torch.amp.autocast(device_type='cuda', enabled=use_amp):
@@ -194,8 +213,8 @@ def main():
                     fake_sty_gray = to_gray_3_ch(generated)
                     gray_anime_smooth = to_gray_3_ch(anime_smooth)
 
-                    fake_gray_logit = D(fake_sty_gray)
-                    generated_m_logit = D(generated_m)
+                    fake_gray_logit = D_s(fake_sty_gray)
+                    generated_m_logit = D_m(generated_m)
 
                     # --- Support G Loss ---
                     con_loss = config['loss_weights']['con_weight'] * \
@@ -235,30 +254,39 @@ def main():
                 scaler.step(optim_G)
                 scaler.update()
 
-                # --- Update D ---
+                # --- Update D_s (Support Discriminator) ---
+                optim_D_s.zero_grad()
                 with torch.amp.autocast(device_type='cuda', enabled=use_amp):
                     fake_sty_gray_d = to_gray_3_ch(generated.detach())
-                    generated_m_d = generated_m.detach()
 
-                    anime_gray_logit = D(anime_sty_gray)
-                    fake_gray_logit_d = D(fake_sty_gray_d)
-                    gray_anime_smooth_logit = D(gray_anime_smooth)
-
-                    # Thay fake_NLMean_l0 bằng teacher_l0_approx
-                    teacher_l0_logit = D(teacher_l0_approx.detach())
-                    generated_m_logit_d = D(generated_m_d)
+                    anime_gray_logit = D_s(anime_sty_gray)
+                    fake_gray_logit_d = D_s(fake_sty_gray_d)
+                    gray_anime_smooth_logit = D_s(gray_anime_smooth)
 
                     D_support_loss = gan_loss_fn.d_support_loss(
                         anime_gray_logit, fake_gray_logit_d, gray_anime_smooth_logit)
+
+                scaler.scale(D_support_loss).backward()
+                scaler.step(optim_D_s)
+                scaler.update()
+
+                # --- Update D_m (Main Discriminator) ---
+                optim_D_m.zero_grad()
+                with torch.amp.autocast(device_type='cuda', enabled=use_amp):
+                    generated_m_d = generated_m.detach()
+
+                    teacher_l0_logit = D_m(teacher_l0_approx.detach())
+                    generated_m_logit_d = D_m(generated_m_d)
+
                     D_main_loss = config['loss_weights']['d_main_weight'] * \
                         gan_loss_fn.d_main_loss(
                             teacher_l0_logit, generated_m_logit_d)
 
-                    Discriminator_loss = D_support_loss + D_main_loss
-
-                scaler.scale(Discriminator_loss).backward()
-                scaler.step(optim_D)
+                scaler.scale(D_main_loss).backward()
+                scaler.step(optim_D_m)
                 scaler.update()
+
+                Discriminator_loss = D_support_loss + D_main_loss
 
                 if is_main_process and idx % 10 == 0:
                     logger.info(
@@ -295,9 +323,11 @@ def main():
             ckpt_dir = config['training'].get('checkpoint_dir', 'checkpoint')
             torch.save({
                 'G': G_net.state_dict(),
-                'D': D.module.state_dict() if isinstance(D, DDP) else D.state_dict(),
+                'D_s': D_s.module.state_dict() if isinstance(D_s, DDP) else D_s.state_dict(),
+                'D_m': D_m.module.state_dict() if isinstance(D_m, DDP) else D_m.state_dict(),
                 'optim_G': optim_G.state_dict(),
-                'optim_D': optim_D.state_dict(),
+                'optim_D_s': optim_D_s.state_dict(),
+                'optim_D_m': optim_D_m.state_dict(),
                 'optim_G_init': optim_G_init.state_dict(),
                 'scaler': scaler.state_dict() if use_amp else None,
                 'epoch': epoch,
