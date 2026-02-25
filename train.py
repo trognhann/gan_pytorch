@@ -31,6 +31,16 @@ def parse_args():
     return parser.parse_args()
 
 
+def set_requires_grad(models, requires_grad):
+    """Set requires_grad for all parameters in given models.
+    Used to freeze D during G step and vice versa — avoids wasted gradient computation."""
+    if not isinstance(models, list):
+        models = [models]
+    for model in models:
+        for p in model.parameters():
+            p.requires_grad = requires_grad
+
+
 def main():
     args = parse_args()
     config = load_config(args.config)
@@ -188,6 +198,8 @@ def main():
                                       init_loss.item(), global_step)
             else:
                 # --- Adversarial Training ---
+                # Freeze D during G step — saves ~600K params gradient computation
+                set_requires_grad([D_s, D_m], False)
                 optim_G.zero_grad()
 
                 # --- Update G ---
@@ -253,6 +265,9 @@ def main():
                 scaler.scale(Generator_loss).backward()
                 scaler.step(optim_G)
                 scaler.update()
+
+                # Unfreeze D for D step
+                set_requires_grad([D_s, D_m], True)
 
                 # --- Update D_s (Support Discriminator) ---
                 optim_D_s.zero_grad()

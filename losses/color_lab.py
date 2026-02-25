@@ -42,21 +42,26 @@ class ColorLoss(nn.Module):
         self.weight = weight
 
     def forward(self, photo, fake):
-        photo = (photo + 1.0) / 2.0
-        fake = (fake + 1.0) / 2.0
+        # AMP safety: pow(x, 2.4) and pow(x, 1/3) can inf/nan with fp16
+        with torch.amp.autocast('cuda', enabled=False):
+            photo = photo.to(torch.float32)
+            fake = fake.to(torch.float32)
 
-        photo_lab = rgb_to_lab(photo)
-        fake_lab = rgb_to_lab(fake)
+            photo = (photo + 1.0) / 2.0
+            fake = (fake + 1.0) / 2.0
 
-        photo_l = photo_lab[:, 0:1] / 100.0
-        fake_l = fake_lab[:, 0:1] / 100.0
+            photo_lab = rgb_to_lab(photo)
+            fake_lab = rgb_to_lab(fake)
 
-        photo_a = (photo_lab[:, 1:2] + 128.0) / 255.0
-        fake_a = (fake_lab[:, 1:2] + 128.0) / 255.0
+            photo_l = photo_lab[:, 0:1] / 100.0
+            fake_l = fake_lab[:, 0:1] / 100.0
 
-        photo_b = (photo_lab[:, 2:3] + 128.0) / 255.0
-        fake_b = (fake_lab[:, 2:3] + 128.0) / 255.0
+            photo_a = (photo_lab[:, 1:2] + 128.0) / 255.0
+            fake_a = (fake_lab[:, 1:2] + 128.0) / 255.0
 
-        loss = 2.0 * self.l1(photo_l, fake_l) + \
-            self.l1(photo_a, fake_a) + self.l1(photo_b, fake_b)
+            photo_b = (photo_lab[:, 2:3] + 128.0) / 255.0
+            fake_b = (fake_lab[:, 2:3] + 128.0) / 255.0
+
+            loss = 2.0 * self.l1(photo_l, fake_l) + \
+                self.l1(photo_a, fake_a) + self.l1(photo_b, fake_b)
         return self.weight * loss

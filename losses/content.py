@@ -12,7 +12,8 @@ class ContentLoss(nn.Module):
     def forward(self, real, fake):
         _, _, real_feat = self.vgg(real)
         _, _, fake_feat = self.vgg(fake)
-        # Divide by feature channels mapped from TF reduce_mean
-        c = real_feat.size(1)
-        loss = self.l1(real_feat, fake_feat) / c
+        # nn.L1Loss(reduction='mean') already averages over all B×C×H×W elements.
+        # Previously divided by C=512 again (from TF reduce_mean misinterpretation),
+        # which made content loss ~512x too small vs style/color losses.
+        loss = self.l1(real_feat, fake_feat)
         return loss
