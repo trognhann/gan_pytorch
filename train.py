@@ -41,6 +41,15 @@ def set_requires_grad(models, requires_grad):
             p.requires_grad = requires_grad
 
 
+def r1_penalty(real_pred, real_img):
+    """R1 gradient penalty — prevents D from becoming overconfident.
+    Penalizes the gradient norm of D's output w.r.t. real images."""
+    grad, = torch.autograd.grad(
+        outputs=real_pred.sum(), inputs=real_img,
+        create_graph=True)
+    return grad.pow(2).reshape(grad.shape[0], -1).sum(1).mean()
+
+
 def main():
     args = parse_args()
     config = load_config(args.config)
@@ -110,6 +119,16 @@ def main():
 
     epochs = config['training']['epochs']
     init_epochs = config['training']['init_epochs']
+    r1_weight = config['loss_weights'].get('r1_weight', 10.0)
+
+    # LR Schedulers — linear decay to 0 over adversarial training epochs
+    adv_epochs = max(1, epochs - init_epochs)
+    sched_G = optim.lr_scheduler.LinearLR(
+        optim_G, start_factor=1.0, end_factor=0.01, total_iters=adv_epochs)
+    sched_D_s = optim.lr_scheduler.LinearLR(
+        optim_D_s, start_factor=1.0, end_factor=0.01, total_iters=adv_epochs)
+    sched_D_m = optim.lr_scheduler.LinearLR(
+        optim_D_m, start_factor=1.0, end_factor=0.01, total_iters=adv_epochs)
 
     log_dir = f"logs/AnimeGANv3_{config['training']['dataset']}"
     if is_main_process:
@@ -210,12 +229,12 @@ def main():
                     # 1. GPU Surrogate Teacher via Guided Filter (Fast & Clean)
                     gf_input = (generated_s.detach() + 1.0) / 2.0
                     teacher_l0_approx = (guided_filter(
-                        gf_input, gf_input, r=2, eps=0.01) * 2.0) - 1.0
+                        gf_input, gf_input, r=2, eps=0.001) * 2.0) - 1.0
 
                     # 2. Support Map for Loss (With Gradients)
                     gf_input_grad = (generated_s + 1.0) / 2.0
                     generated = (guided_filter(
-                        gf_input_grad, gf_input_grad, r=2, eps=0.01) * 2.0) - 1.0
+                        gf_input_grad, gf_input_grad, r=2, eps=0.001) * 2.0) - 1.0
 
                     def to_gray_3_ch(x):
                         gray = 0.2125 * x[:, 0:1] + 0.7154 * \
@@ -265,41 +284,54 @@ def main():
 
                 scaler.scale(Generator_loss).backward()
                 scaler.step(optim_G)
-                scaler.update()
+                # NOTE: scaler.update() called once at end of iteration, not per optimizer
 
                 # Unfreeze D for D step
                 set_requires_grad([D_s, D_m], True)
 
                 # --- Update D_s (Support Discriminator) ---
                 optim_D_s.zero_grad()
+                # R1 penalty requires grad w.r.t. real input
+                anime_sty_gray_r1 = anime_sty_gray.detach().requires_grad_(True)
                 with torch.amp.autocast(device_type='cuda', enabled=use_amp):
                     fake_sty_gray_d = to_gray_3_ch(generated.detach())
 
-                    anime_gray_logit = D_s(anime_sty_gray)
+                    anime_gray_logit = D_s(anime_sty_gray_r1)
                     fake_gray_logit_d = D_s(fake_sty_gray_d)
                     gray_anime_smooth_logit = D_s(gray_anime_smooth)
 
                     D_support_loss = gan_loss_fn.d_support_loss(
                         anime_gray_logit, fake_gray_logit_d, gray_anime_smooth_logit)
 
+                # R1 gradient penalty on real images (computed outside autocast for stability)
+                r1_s = r1_penalty(anime_gray_logit, anime_sty_gray_r1)
+                D_support_loss = D_support_loss + r1_weight * r1_s
+
                 scaler.scale(D_support_loss).backward()
                 scaler.step(optim_D_s)
-                scaler.update()
 
                 # --- Update D_m (Main Discriminator) ---
                 optim_D_m.zero_grad()
+                # R1 penalty requires grad w.r.t. real input
+                teacher_r1 = teacher_l0_approx.detach().requires_grad_(True)
                 with torch.amp.autocast(device_type='cuda', enabled=use_amp):
                     generated_m_d = generated_m.detach()
 
-                    teacher_l0_logit = D_m(teacher_l0_approx.detach())
+                    teacher_l0_logit = D_m(teacher_r1)
                     generated_m_logit_d = D_m(generated_m_d)
 
                     D_main_loss = config['loss_weights']['d_main_weight'] * \
                         gan_loss_fn.d_main_loss(
                             teacher_l0_logit, generated_m_logit_d)
 
+                # R1 gradient penalty on real images (computed outside autocast for stability)
+                r1_m = r1_penalty(teacher_l0_logit, teacher_r1)
+                D_main_loss = D_main_loss + r1_weight * r1_m
+
                 scaler.scale(D_main_loss).backward()
                 scaler.step(optim_D_m)
+
+                # Single scaler update per iteration (was 3x before — destabilized scale factor)
                 scaler.update()
 
                 Discriminator_loss = D_support_loss + D_main_loss
@@ -334,6 +366,12 @@ def main():
                             'Visuals/Photo_Support_Teacher_Main', grid, global_step)
 
             global_step += 1
+
+        # Step LR schedulers (only during adversarial training)
+        if epoch >= init_epochs:
+            sched_G.step()
+            sched_D_s.step()
+            sched_D_m.step()
 
         if is_main_process and (epoch + 1) % config['training']['save_freq'] == 0:
             ckpt_dir = config['training'].get('checkpoint_dir', 'checkpoint')

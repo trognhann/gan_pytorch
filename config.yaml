@@ -4,7 +4,7 @@ training:
   # General
   dataset: "Shinkai"      # Dataset name (e.g., 'Hayao', 'Shinkai')
   dataset_dir: "/kaggle/input/datasets/nhanwork/allsource/dataset" # Directory where datasets are stored
-  epochs: 50
+  epochs: 35
   init_epochs: 5          # Generator pre-train epochs
   batch_size: 8
   save_freq: 1            # Frequency (in epochs) to save checkpoints
@@ -40,7 +40,8 @@ loss_weights:
   adv_weight_m: 0.02
   tv_weight_m: 0.001
   d_main_weight: 0.1
+  r1_weight: 10.0          # R1 gradient penalty weight for D
 
 model:
-  ch: 32                  # Base channel size for D
+  ch: 64                  # Base channel size for D (was 32, increased to prevent D collapse)
   sn: true                # Spectral Normalization in D
