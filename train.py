@@ -282,9 +282,21 @@ def main():
                     G_main_loss = g_m_loss + p0_loss + p4_loss + tv_loss_m
                     Generator_loss = G_support_loss + G_main_loss
 
+                # NaN/Inf detection — skip bad batches to prevent permanent corruption
+                if torch.isnan(Generator_loss) or torch.isinf(Generator_loss):
+                    if is_main_process:
+                        logger.warning(
+                            f"NaN/Inf in G_loss at epoch {epoch} step {idx}! Skipping batch.")
+                    optim_G.zero_grad()
+                    optim_D_s.zero_grad()
+                    optim_D_m.zero_grad()
+                    global_step += 1
+                    continue
+
                 scaler.scale(Generator_loss).backward()
+                scaler.unscale_(optim_G)
+                torch.nn.utils.clip_grad_norm_(G.parameters(), max_norm=10.0)
                 scaler.step(optim_G)
-                # NOTE: scaler.update() called once at end of iteration, not per optimizer
 
                 # Unfreeze D for D step
                 set_requires_grad([D_s, D_m], True)
@@ -303,11 +315,13 @@ def main():
                     D_support_loss = gan_loss_fn.d_support_loss(
                         anime_gray_logit, fake_gray_logit_d, gray_anime_smooth_logit)
 
-                # R1 gradient penalty on real images (computed outside autocast for stability)
-                r1_s = r1_penalty(anime_gray_logit, anime_sty_gray_r1)
-                D_support_loss = D_support_loss + r1_weight * r1_s
+                    # R1 gradient penalty — computed inside autocast to avoid fp16/fp32 scale mismatch
+                    r1_s = r1_penalty(anime_gray_logit, anime_sty_gray_r1)
+                    D_support_loss = D_support_loss + r1_weight * r1_s
 
                 scaler.scale(D_support_loss).backward()
+                scaler.unscale_(optim_D_s)
+                torch.nn.utils.clip_grad_norm_(D_s.parameters(), max_norm=10.0)
                 scaler.step(optim_D_s)
 
                 # --- Update D_m (Main Discriminator) ---
@@ -324,11 +338,13 @@ def main():
                         gan_loss_fn.d_main_loss(
                             teacher_l0_logit, generated_m_logit_d)
 
-                # R1 gradient penalty on real images (computed outside autocast for stability)
-                r1_m = r1_penalty(teacher_l0_logit, teacher_r1)
-                D_main_loss = D_main_loss + r1_weight * r1_m
+                    # R1 gradient penalty — computed inside autocast to avoid fp16/fp32 scale mismatch
+                    r1_m = r1_penalty(teacher_l0_logit, teacher_r1)
+                    D_main_loss = D_main_loss + r1_weight * r1_m
 
                 scaler.scale(D_main_loss).backward()
+                scaler.unscale_(optim_D_m)
+                torch.nn.utils.clip_grad_norm_(D_m.parameters(), max_norm=10.0)
                 scaler.step(optim_D_m)
 
                 # Single scaler update per iteration (was 3x before — destabilized scale factor)
