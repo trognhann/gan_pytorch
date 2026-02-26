@@ -17,7 +17,7 @@ training:
   adam_betas: [0.5, 0.999]
 
   # DDP and AMP
-  use_amp: true           # Mixed precision
+  use_amp: false          # Disabled to debug NaN — rules out fp16 overflow
   num_workers: 4
 
   # Image handling

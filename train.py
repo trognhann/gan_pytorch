@@ -282,16 +282,25 @@ def main():
                     G_main_loss = g_m_loss + p0_loss + p4_loss + tv_loss_m
                     Generator_loss = G_support_loss + G_main_loss
 
-                # NaN/Inf detection — skip bad batches to prevent permanent corruption
-                if torch.isnan(Generator_loss) or torch.isinf(Generator_loss):
-                    if is_main_process:
+                # --- Debug NaN: log every step to catch the first NaN ---
+                if is_main_process:
+                    debug_parts = {
+                        'generated_s': generated_s, 'generated_m': generated_m,
+                        'generated': generated, 'teacher': teacher_l0_approx,
+                        'con': con_loss, 'sty': sty_loss, 'rs': rs_loss,
+                        'color': color_loss, 'tv': tv_loss, 'g_adv': g_adv_loss,
+                        'p0': p0_loss, 'p4': p4_loss, 'tv_m': tv_loss_m,
+                        'g_m_adv': g_m_loss, 'G_total': Generator_loss,
+                    }
+                    nan_parts = [k for k, v in debug_parts.items()
+                                 if torch.isnan(v).any() or torch.isinf(v).any()]
+                    if nan_parts:
                         logger.warning(
-                            f"NaN/Inf in G_loss at epoch {epoch} step {idx}! Skipping batch.")
-                    optim_G.zero_grad()
-                    optim_D_s.zero_grad()
-                    optim_D_m.zero_grad()
-                    global_step += 1
-                    continue
+                            f"[NaN DEBUG] Epoch {epoch} Step {idx} — NaN/Inf in: {nan_parts}")
+                        for k in nan_parts:
+                            v = debug_parts[k]
+                            logger.warning(
+                                f"  {k}: min={v.min().item():.6g}, max={v.max().item():.6g}, mean={v.float().mean().item():.6g}")
 
                 scaler.scale(Generator_loss).backward()
                 scaler.unscale_(optim_G)
