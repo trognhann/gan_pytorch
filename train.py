@@ -119,7 +119,8 @@ def main():
 
     epochs = config['training']['epochs']
     init_epochs = config['training']['init_epochs']
-    r1_weight = config['loss_weights'].get('r1_weight', 10.0)
+    r1_weight = config['loss_weights'].get('r1_weight', 1.0)
+    d_update_ratio = config['loss_weights'].get('d_update_ratio', 2)
 
     # LR Schedulers — linear decay to 0 over adversarial training epochs
     adv_epochs = max(1, epochs - init_epochs)
@@ -310,54 +311,75 @@ def main():
                 # Unfreeze D for D step
                 set_requires_grad([D_s, D_m], True)
 
-                # --- Update D_s (Support Discriminator) ---
-                optim_D_s.zero_grad()
-                # R1 penalty requires grad w.r.t. real input
-                anime_sty_gray_r1 = anime_sty_gray.detach().requires_grad_(True)
-                with torch.amp.autocast(device_type='cuda', enabled=use_amp):
-                    fake_sty_gray_d = to_gray_3_ch(generated.detach())
+                # --- Update D multiple times per G step (d_update_ratio) ---
+                # This gives D more learning capacity to keep up with G and prevent D collapse.
+                for d_iter in range(d_update_ratio):
+                    # On extra D iterations (d_iter > 0), re-generate fresh fakes
+                    # to avoid training D on stale G outputs.
+                    if d_iter > 0:
+                        with torch.no_grad():
+                            gen_s_fresh, gen_m_fresh = G(
+                                real_photo, inference=False)
+                            gf_in = (gen_s_fresh + 1.0) / 2.0
+                            generated_fresh = (guided_filter(
+                                gf_in, gf_in, r=2, eps=0.001) * 2.0) - 1.0
+                            gf_in_t = (gen_s_fresh + 1.0) / 2.0
+                            teacher_fresh = (guided_filter(
+                                gf_in_t, gf_in_t, r=2, eps=0.001) * 2.0) - 1.0
+                        fake_for_d_s = to_gray_3_ch(generated_fresh)
+                        fake_for_d_m = gen_m_fresh
+                        teacher_for_d = teacher_fresh
+                    else:
+                        fake_for_d_s = to_gray_3_ch(generated.detach())
+                        fake_for_d_m = generated_m.detach()
+                        teacher_for_d = teacher_l0_approx.detach()
 
-                    anime_gray_logit = D_s(anime_sty_gray_r1)
-                    fake_gray_logit_d = D_s(fake_sty_gray_d)
-                    gray_anime_smooth_logit = D_s(gray_anime_smooth)
+                    # --- Update D_s (Support Discriminator) ---
+                    optim_D_s.zero_grad()
+                    # R1 penalty requires grad w.r.t. real input
+                    anime_sty_gray_r1 = anime_sty_gray.detach().requires_grad_(True)
+                    with torch.amp.autocast(device_type='cuda', enabled=use_amp):
+                        anime_gray_logit = D_s(anime_sty_gray_r1)
+                        fake_gray_logit_d = D_s(fake_for_d_s)
+                        gray_anime_smooth_logit = D_s(gray_anime_smooth)
 
-                    D_support_loss = gan_loss_fn.d_support_loss(
-                        anime_gray_logit, fake_gray_logit_d, gray_anime_smooth_logit)
+                        D_support_loss = gan_loss_fn.d_support_loss(
+                            anime_gray_logit, fake_gray_logit_d, gray_anime_smooth_logit)
 
-                    # R1 gradient penalty — computed inside autocast to avoid fp16/fp32 scale mismatch
-                    r1_s = r1_penalty(anime_gray_logit, anime_sty_gray_r1)
-                    D_support_loss = D_support_loss + r1_weight * r1_s
+                        # R1 gradient penalty
+                        r1_s = r1_penalty(anime_gray_logit, anime_sty_gray_r1)
+                        D_support_loss = D_support_loss + r1_weight * r1_s
 
-                scaler.scale(D_support_loss).backward()
-                scaler.unscale_(optim_D_s)
-                torch.nn.utils.clip_grad_norm_(D_s.parameters(), max_norm=10.0)
-                scaler.step(optim_D_s)
+                    scaler.scale(D_support_loss).backward()
+                    scaler.unscale_(optim_D_s)
+                    torch.nn.utils.clip_grad_norm_(
+                        D_s.parameters(), max_norm=10.0)
+                    scaler.step(optim_D_s)
 
-                # --- Update D_m (Main Discriminator) ---
-                optim_D_m.zero_grad()
-                # R1 penalty requires grad w.r.t. real input
-                teacher_r1 = teacher_l0_approx.detach().requires_grad_(True)
-                with torch.amp.autocast(device_type='cuda', enabled=use_amp):
-                    generated_m_d = generated_m.detach()
+                    # --- Update D_m (Main Discriminator) ---
+                    optim_D_m.zero_grad()
+                    # R1 penalty requires grad w.r.t. real input
+                    teacher_r1 = teacher_for_d.requires_grad_(True)
+                    with torch.amp.autocast(device_type='cuda', enabled=use_amp):
+                        teacher_l0_logit = D_m(teacher_r1)
+                        generated_m_logit_d = D_m(fake_for_d_m)
 
-                    teacher_l0_logit = D_m(teacher_r1)
-                    generated_m_logit_d = D_m(generated_m_d)
+                        D_main_loss = config['loss_weights']['d_main_weight'] * \
+                            gan_loss_fn.d_main_loss(
+                                teacher_l0_logit, generated_m_logit_d)
 
-                    D_main_loss = config['loss_weights']['d_main_weight'] * \
-                        gan_loss_fn.d_main_loss(
-                            teacher_l0_logit, generated_m_logit_d)
+                        # R1 gradient penalty
+                        r1_m = r1_penalty(teacher_l0_logit, teacher_r1)
+                        D_main_loss = D_main_loss + r1_weight * r1_m
 
-                    # R1 gradient penalty — computed inside autocast to avoid fp16/fp32 scale mismatch
-                    r1_m = r1_penalty(teacher_l0_logit, teacher_r1)
-                    D_main_loss = D_main_loss + r1_weight * r1_m
+                    scaler.scale(D_main_loss).backward()
+                    scaler.unscale_(optim_D_m)
+                    torch.nn.utils.clip_grad_norm_(
+                        D_m.parameters(), max_norm=10.0)
+                    scaler.step(optim_D_m)
 
-                scaler.scale(D_main_loss).backward()
-                scaler.unscale_(optim_D_m)
-                torch.nn.utils.clip_grad_norm_(D_m.parameters(), max_norm=10.0)
-                scaler.step(optim_D_m)
-
-                # Single scaler update per iteration (was 3x before — destabilized scale factor)
-                scaler.update()
+                    # Single scaler update per D iteration
+                    scaler.update()
 
                 Discriminator_loss = D_support_loss + D_main_loss
 
