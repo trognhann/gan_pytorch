@@ -3,7 +3,7 @@
 training:
   # General
   dataset: "Shinkai"      # Dataset name (e.g., 'Hayao', 'Shinkai')
-  dataset_dir: "/kaggle/input/datasets/nhanwork/allsource/dataset" # Directory where datasets are stored
+  dataset_dir: "/kaggle/input/datasets/tronynhan/gannime-train/dataset" # Directory where datasets are stored
   epochs: 10
   init_epochs: 5          # Generator pre-train epochs
   batch_size: 8
