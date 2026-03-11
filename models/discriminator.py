@@ -4,30 +4,6 @@ from torch.nn.utils import spectral_norm
 from .lade import LADE
 
 
-class LADE_D(nn.Module):
-    def __init__(self, channels, sn=True):
-        super(LADE_D, self).__init__()
-        self.conv = nn.Conv2d(channels, channels,
-                              kernel_size=1, stride=1, padding=0, bias=True)
-        if sn:
-            self.conv = spectral_norm(self.conv)
-        self.eps = 1e-5
-
-    def forward(self, x):
-        tx = self.conv(x)
-
-        t_mean = tx.mean(dim=[2, 3], keepdim=True)
-        t_var = tx.var(dim=[2, 3], unbiased=False, keepdim=True)
-        t_sigma = torch.sqrt(t_var + self.eps)
-
-        in_mean = x.mean(dim=[2, 3], keepdim=True)
-        in_var = x.var(dim=[2, 3], unbiased=False, keepdim=True)
-        in_sigma = torch.sqrt(in_var + self.eps)
-
-        x_in = (x - in_mean) / in_sigma
-        out = x_in * t_sigma + t_mean
-        return out
-
 
 def conv_block(in_channels, out_channels, kernel_size=3, stride=1, sn=True):
     if (kernel_size - stride) % 2 == 0:
@@ -62,12 +38,12 @@ class Discriminator(nn.Module):
         for i in range(3):
             self.blocks.append(nn.Sequential(
                 conv_block(channels, channels, kernel_size=3, stride=2, sn=sn),
-                LADE_D(channels, sn=sn),
+                LADE(channels, use_sn=sn),
                 nn.LeakyReLU(0.2, inplace=True),
 
                 conv_block(channels, channels * 2,
                            kernel_size=3, stride=1, sn=sn),
-                LADE_D(channels * 2, sn=sn),
+                LADE(channels * 2, use_sn=sn),
                 nn.LeakyReLU(0.2, inplace=True)
             ))
             channels = channels * 2
