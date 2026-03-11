@@ -4,30 +4,37 @@ import os
 import argparse
 from tqdm import tqdm
 
-
-def make_edge_smooth(img_path, save_path):
-    img = cv2.imread(img_path)
-    if img is None:
+def make_edge_smooth(img_path, save_path, img_size=256, kernel_size=5):
+    bgr_img = cv2.imread(img_path)
+    gray_img = cv2.imread(img_path, 0)
+    
+    if bgr_img is None or gray_img is None:
         return
+    bgr_img = cv2.resize(bgr_img, (img_size, img_size))
+    gray_img = cv2.resize(gray_img, (img_size, img_size))
 
-    # 1. Edge preservation smoothing (approximate LO smoothing)
-    # sigma_s: Range of neighborhood (0-200), sigma_r: Range of colors (0-1)
-    # We use edgePreservingFilter which is faster and effective for "cartoon" look prep
-    smooth = cv2.edgePreservingFilter(img, flags=1, sigma_s=60, sigma_r=0.4)
+    edges = cv2.Canny(gray_img, 100, 200)
 
-    # 2. Refine with details (Optional customized logic matching typical AnimeGAN preprocessing)
-    # Can add dialation if needed, but edgeOscillating is usually enough for the 'smooth' target
+    kernel = np.ones((kernel_size, kernel_size), np.uint8)
+    dilation = cv2.dilate(edges, kernel)
 
-    cv2.imwrite(save_path, smooth)
+    blurred_img = cv2.GaussianBlur(bgr_img, (kernel_size, kernel_size), 0)
+    mask = np.expand_dims(dilation > 0, axis=-1)
+    gauss_img = np.where(mask, blurred_img, bgr_img)
+
+    cv2.imwrite(save_path, gauss_img.astype(np.uint8))
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description='Edge Smoothing for AnimeGAN dataset')
-    parser.add_argument('--input_dir', type=str, required=True,
-                        help='Path to input anime images')
+    parser = argparse.ArgumentParser(description='Fast Edge Smoothing for DTGAN (AnimeGANv3) dataset')
+    parser.add_argument('--input_dir', type=str,
+                        default=r'dataset\style',
+                        help='Path to input anime images (Domain A - e.g., ghibli_c1)')
     parser.add_argument('--output_dir', type=str,
-                        required=True, help='Path to save smooth images')
+                        default=r'dataset\style_smooth',
+                        help='Path to save edge-smoothed images (Domain E)')
+    parser.add_argument('--img_size', type=int, default=256, 
+                        help='Image size for training (default: 256)')
     args = parser.parse_args()
 
     if not os.path.exists(args.output_dir):
@@ -42,9 +49,10 @@ def main():
 
         in_path = os.path.join(args.input_dir, f)
         out_path = os.path.join(args.output_dir, f)
-        make_edge_smooth(in_path, out_path)
+        
+        make_edge_smooth(in_path, out_path, img_size=args.img_size)
 
-    print("Done.")
+    print("Done! Dataset Domain E is ready.")
 
 
 if __name__ == '__main__':
