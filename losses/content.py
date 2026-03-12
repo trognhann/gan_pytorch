@@ -9,11 +9,11 @@ class ContentLoss(nn.Module):
         self.vgg = vgg if vgg is not None else VGG19()
         self.l1 = nn.L1Loss()
 
-    def forward(self, real, fake):
-        _, _, real_feat = self.vgg(real)
-        _, _, fake_feat = self.vgg(fake)
-        # nn.L1Loss(reduction='mean') already averages over all B×C×H×W elements.
-        # Previously divided by C=512 again (from TF reduce_mean misinterpretation),
-        # which made content loss ~512x too small vs style/color losses.
-        loss = self.l1(real_feat, fake_feat)
+    def forward(self, real_photo, fake_img):
+        _, _, real_f4 = self.vgg(real_photo)
+        _, _, fake_f4 = self.vgg(fake_img)
+
+        c = real_f4.size(1)
+        loss = self.l1(fake_f4, real_f4.detach()) / c
+
         return loss
