@@ -2,32 +2,24 @@ import torch
 import torch.nn as nn
 from torch.nn.utils import spectral_norm
 
-
 class LADE(nn.Module):
-    """Linear Adaptive Instance Denormalization"""
+    """Linear Adaptive Instance Denormalization - Optimized Version"""
 
     def __init__(self, channels, use_sn=False):
         super(LADE, self).__init__()
-        self.conv = nn.Conv2d(channels, channels,
-                              kernel_size=1, stride=1, padding=0, bias=True)
-        if use_sn:
-            self.conv = spectral_norm(self.conv)
+        conv = nn.Conv2d(channels, channels, kernel_size=1, stride=1, padding=0, bias=True)
+        self.conv = spectral_norm(conv) if use_sn else conv
         self.eps = 1e-5
 
     def forward(self, x):
-        # x is [B, C, H, W]
         tx = self.conv(x)
 
-        # Calculate statistics
-        t_mean = tx.mean(dim=[2, 3], keepdim=True)
-        t_var = tx.var(dim=[2, 3], unbiased=False, keepdim=True)
-        t_sigma = torch.sqrt(t_var + self.eps)
+        t_var, t_mean = torch.var_mean(tx, dim=[2, 3], keepdim=True, unbiased=False)
+        in_var, in_mean = torch.var_mean(x, dim=[2, 3], keepdim=True, unbiased=False)
 
-        in_mean = x.mean(dim=[2, 3], keepdim=True)
-        in_var = x.var(dim=[2, 3], unbiased=False, keepdim=True)
+        t_sigma = torch.sqrt(t_var + self.eps)
         in_sigma = torch.sqrt(in_var + self.eps)
 
-        x_in = (x - in_mean) / in_sigma
-
-        out = x_in * t_sigma + t_mean
+        out = (x - in_mean) * (t_sigma / in_sigma) + t_mean
+        
         return out

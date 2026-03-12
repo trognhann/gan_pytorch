@@ -7,3 +7,5 @@ __pycache__/
 *.pt
 *.log
 .DS_Store
+*.zip
+.vscode/

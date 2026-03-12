@@ -35,7 +35,7 @@ class ExternalAttention_v3(nn.Module):
         # Softmax over axis=1 (HW)
         attn = F.softmax(attn, dim=1)
         # Normalize over axis=2 (k)
-        attn = attn / (1e-9 + attn.sum(dim=2, keepdim=True))
+        attn = attn / (1e-5 + attn.sum(dim=2, keepdim=True))
 
         # Second 1D Conv equivalent (matmul with transposed mk)
         # [B, HW, k] x [k, c] -> [B, HW, c]

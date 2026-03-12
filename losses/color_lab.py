@@ -1,67 +1,61 @@
 import torch
 import torch.nn as nn
 
-
-def rgb_to_xyz(input):
-    matrix = torch.tensor([
-        [0.412453, 0.357580, 0.180423],
-        [0.212671, 0.715160, 0.072169],
-        [0.019334, 0.119193, 0.950227]
-    ], dtype=input.dtype, device=input.device)
-
-    mask = input > 0.04045
-    input_lin = torch.where(mask, torch.pow(
-        (input + 0.055) / 1.055, 2.4), input / 12.92)
-
-    input_lin = input_lin.permute(0, 2, 3, 1)  # B, H, W, C
-    xyz = torch.matmul(input_lin, matrix.t())
-    xyz = xyz.permute(0, 3, 1, 2)  # B, C, H, W
-    return xyz
-
-
-def xyz_to_lab(xyz):
-    illuminant = torch.tensor(
-        [0.95047, 1.0, 1.08883], dtype=xyz.dtype, device=xyz.device).view(1, 3, 1, 1)
-    xyz = xyz / illuminant
-    mask = xyz > 0.008856
-    f = torch.where(mask, torch.pow(xyz, 1.0/3.0), xyz * 7.787 + 16.0/116.0)
-    l = (f[:, 1:2, :, :] * 116.0) - 16.0
-    a = (f[:, 0:1, :, :] - f[:, 1:2, :, :]) * 500.0
-    b = (f[:, 1:2, :, :] - f[:, 2:3, :, :]) * 200.0
-    return torch.cat([l, a, b], dim=1)
-
-
-def rgb_to_lab(rgb):
-    return xyz_to_lab(rgb_to_xyz(rgb))
-
-
 class ColorLoss(nn.Module):
-    def __init__(self, weight=10.0):
+    def __init__(self):
         super(ColorLoss, self).__init__()
+        # L1 Loss cho kênh Y (Độ sáng)
         self.l1 = nn.L1Loss()
-        self.weight = weight
+        # Huber Loss (Smooth L1 Loss trong PyTorch) cho kênh U và V (Màu sắc)
+        # Mặc định beta=1.0 tương đương với delta=1.0 trong tf.losses.huber_loss
+        self.huber = nn.SmoothL1Loss() 
 
-    def forward(self, photo, fake):
-        # AMP safety: pow(x, 2.4) and pow(x, 1/3) can inf/nan with fp16
-        with torch.amp.autocast('cuda', enabled=False):
-            photo = photo.to(torch.float32)
-            fake = fake.to(torch.float32)
+        # Ma trận chuyển đổi RGB -> YUV (Chuẩn BT.601 của tf.image.rgb_to_yuv)
+        matrix = torch.tensor([
+            [ 0.299,       0.587,       0.114],
+            [-0.14714119, -0.28886916,  0.43601035],
+            [ 0.61497538, -0.51496512, -0.10001026]
+        ], dtype=torch.float32)
+        
+        # Đăng ký vào buffer để biến này đi theo model lên GPU
+        self.register_buffer('rgb2yuv_matrix', matrix)
 
-            photo = (photo + 1.0) / 2.0
-            fake = (fake + 1.0) / 2.0
+    def rgb_to_yuv(self, image):
+        """
+        image shape: [Batch, 3, H, W] (Đã được scale về dải [0, 1])
+        """
+        # Đổi shape từ [B, 3, H, W] -> [B, H, W, 3] để nhân ma trận
+        img_permuted = image.permute(0, 2, 3, 1)
+        
+        # Thực hiện phép nhân ma trận: (RGB) x (Matrix^T)
+        yuv = torch.matmul(img_permuted, self.rgb2yuv_matrix.T)
+        
+        # Trả lại shape [B, 3, H, W]
+        return yuv.permute(0, 3, 1, 2)
 
-            photo_lab = rgb_to_lab(photo)
-            fake_lab = rgb_to_lab(fake)
+    def forward(self, fake_img, real_photo):
+        """
+        fake_img: Ảnh Generator sinh ra
+        real_photo: Ảnh chụp thực tế (giữ vai trò mỏ neo màu sắc)
+        """
+        # 1. Ép dải pixel từ [-1, 1] về [0, 1] giống code tf: (rgb + 1.0)/2.0
+        fake_img_01 = (fake_img + 1.0) / 2.0
+        real_photo_01 = (real_photo + 1.0) / 2.0
 
-            photo_l = photo_lab[:, 0:1] / 100.0
-            fake_l = fake_lab[:, 0:1] / 100.0
+        # 2. Chuyển đổi sang không gian màu YUV
+        fake_yuv = self.rgb_to_yuv(fake_img_01)
+        
+        with torch.no_grad():
+            real_yuv = self.rgb_to_yuv(real_photo_01)
 
-            photo_a = (photo_lab[:, 1:2] + 128.0) / 255.0
-            fake_a = (fake_lab[:, 1:2] + 128.0) / 255.0
+        # 3. Tách riêng các kênh Y, U, V (index 0, 1, 2)
+        fake_y, fake_u, fake_v = fake_yuv[:, 0:1, :, :], fake_yuv[:, 1:2, :, :], fake_yuv[:, 2:3, :, :]
+        real_y, real_u, real_v = real_yuv[:, 0:1, :, :], real_yuv[:, 1:2, :, :], real_yuv[:, 2:3, :, :]
 
-            photo_b = (photo_lab[:, 2:3] + 128.0) / 255.0
-            fake_b = (fake_lab[:, 2:3] + 128.0) / 255.0
+        # 4. Tính toán Loss kết hợp (L1 cho Y, Huber cho U và V)
+        loss_y = self.l1(fake_y, real_y)
+        loss_u = self.huber(fake_u, real_u)
+        loss_v = self.huber(fake_v, real_v)
 
-            loss = 2.0 * self.l1(photo_l, fake_l) + \
-                self.l1(photo_a, fake_a) + self.l1(photo_b, fake_b)
-        return self.weight * loss
+        # Tổng hợp Loss
+        return loss_y + loss_u + loss_v
