@@ -25,9 +25,10 @@ class GANLoss(nn.Module):
         return torch.mean((fake_logit - 1.0) ** 2)
 
     def tv_loss(self, x):
-        # Calculate exactly like tf.image.total_variation: sum over H, W, C; mean over B
-        dh = torch.abs(x[:, :, 1:, :] - x[:, :, :-1, :])
-        dw = torch.abs(x[:, :, :, 1:] - x[:, :, :, :-1])
+        # Match TF original: tf.nn.l2_loss(dh)/size_dh + tf.nn.l2_loss(dw)/size_dw
+        # tf.nn.l2_loss = sum(x^2) / 2
+        dh = x[:, :, :-1, :] - x[:, :, 1:, :]
+        dw = x[:, :, :, :-1] - x[:, :, :, 1:]
 
-        tv = torch.sum(dh, dim=[1, 2, 3]) + torch.sum(dw, dim=[1, 2, 3])
-        return torch.mean(tv)
+        return torch.sum(dh ** 2) / (2.0 * dh.numel()) + \
+               torch.sum(dw ** 2) / (2.0 * dw.numel())
