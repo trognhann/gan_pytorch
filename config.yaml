@@ -34,9 +34,9 @@ loss_weights:
   vgg_region_weight: 0.2
   
   # Main Tail
-  p0_weight: 10.0           # Reduced from 50.0 — too large amplifies gradient explosion risk
-  p4_weight: 0.5
-  adv_weight_m: 0.02
+  p0_weight: 1.5            # Changed from 10.0: Reduce pixel copy-pasting (Identity Mapping)
+  p4_weight: 1.0            # Changed from 0.5: Increase style structural focus
+  adv_weight_m: 0.1         # Changed from 0.02: Increase adversarial pressure to generate anime style
   tv_weight_m: 0.001
   d_main_weight: 0.1
   r1_weight: 1.0           # R1 gradient penalty weight for D (reduced from 10.0 to prevent D collapse)
