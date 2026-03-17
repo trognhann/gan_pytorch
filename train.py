@@ -200,7 +200,7 @@ def train(cfg):
                     fake_si = guided_filter(photo, fake_s_raw, r=1)
 
                 # ── D_support (grayscale domain) ─────────────────────────
-                anime_gray = rgb_to_grayscale(anime)
+                anime_gray = rgb_to_grayscale(anime).requires_grad_(True)
                 fake_gray = rgb_to_grayscale(fake_si)
                 smooth_gray = rgb_to_grayscale(smooth)
 
@@ -212,7 +212,11 @@ def train(cfg):
                     loss_D_s = gan_loss_fn.d_support_loss(d_s_anime, d_s_fake, d_s_smooth)
                     loss_D_s = loss_D_s * w_cfg.get('d_smooth_weight', 1.0)
 
-                scaler.scale(loss_D_s).backward()
+                    # R1 penalty for D_s (prevent D_s collapse)
+                    r1_s = r1_penalty(d_s_anime, anime_gray)
+                    loss_D_s_total = loss_D_s + w_cfg.get('r1_weight_s', 10.0) * r1_s
+
+                scaler.scale(loss_D_s_total).backward()
                 scaler.step(opt_D_s)
                 scaler.update()
 
@@ -276,8 +280,8 @@ def train(cfg):
             if i % 50 == 0:
                 pbar.set_postfix(
                     G=f"{loss_G.item():.3f}",
-                    Ds=f"{loss_D_s.item():.3f}",
-                    Dm=f"{loss_D_m.item():.3f}",
+                    Ds=f"{loss_D_s_total.item():.3f}",
+                    Dm=f"{loss_D_m_total.item():.3f}",
                 )
                 logger.info(
                     f"E{epoch+1} S{global_step} | "
@@ -288,7 +292,7 @@ def train(cfg):
                     f"adv_m={g_adv_m.item():.3f} pix={g_pixel.item():.3f} "
                     f"percep={g_percep.item():.3f} tv_m={g_tv_m.item():.3f}] | "
                     f"D_s={loss_D_s.item():.4f} D_m={loss_D_m.item():.4f} "
-                    f"R1={r1.item():.4f}"
+                    f"R1={r1.item():.4f} R1_s={r1_s.item():.4f}"
                 )
 
         # ── End of epoch ─────────────────────────────────────────────────

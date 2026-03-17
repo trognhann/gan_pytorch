@@ -3,7 +3,7 @@
 training:
   # General
   dataset_dir: "/kaggle/input/datasets/tronynhan/dataa-pytorch/dataset" # Directory where datasets are stored
-  epochs: 10
+  epochs: 20              # ⬆ Từ 10 → 20: Thêm training time
   init_epochs: 5          # Generator pre-train epochs
   batch_size: 8
   save_freq: 1            # Frequency (in epochs) to save checkpoints
@@ -11,8 +11,8 @@ training:
 
   # Learning Rates
   init_lr: 2.0e-4         # Pre-train generator LR
-  g_lr: 1.0e-4            # GAN generator LR
-  d_lr: 2.0e-4            # GAN discriminator LR (2x G_lr per paper)
+  g_lr: 5.0e-5            # ⬇ Từ 1.0e-4: G chậm lại, D bắt kịp
+  d_lr: 2.0e-4            # GAN discriminator LR
   adam_betas: [0.5, 0.999]
 
   # DDP and AMP
@@ -26,22 +26,23 @@ loss_weights:
   # Support Tail
   con_weight: 0.5
   sty_weight: [0.1, 5.0, 25.0]
-  color_weight: 10.0
+  color_weight: 5.0       # ⬇ Từ 10.0: Cho phép G thay đổi color palette
   tv_weight: 0.001
-  adv_weight: 1.0         # LSGAN D fake vs anime real weight scaling
-  d_smooth_weight: 2.0
+  adv_weight: 2.0         # ⬆ Từ 1.0: Push G tạo style mạnh hơn
+  d_smooth_weight: 1.0    # ⬇ Từ 2.0: Bớt smooth D output
   region_smooth_weight: 0.2
   vgg_region_weight: 0.2
   
   # Main Tail
-  p0_weight: 1.5            # Changed from 10.0: Reduce pixel copy-pasting (Identity Mapping)
-  p4_weight: 1.0            # Changed from 0.5: Increase style structural focus
-  adv_weight_m: 0.1         # Changed from 0.02: Increase adversarial pressure to generate anime style
+  p0_weight: 1.0            # ⬇ Từ 1.5: Giảm pixel copy tiếp
+  p4_weight: 1.0            # Style structural focus
+  adv_weight_m: 0.15        # ⬆ Từ 0.1: Tăng adversarial main
   tv_weight_m: 0.001
-  d_main_weight: 0.1
-  r1_weight: 1.0           # R1 gradient penalty weight for D (reduced from 10.0 to prevent D collapse)
-  d_update_ratio: 2         # Train D this many times per G step (fixes D collapse)
+  d_main_weight: 0.2        # ⬆ Từ 0.1: D_m mạnh hơn
+  r1_weight: 5.0            # ⬆ Từ 1.0: Regularize D_m mạnh hơn
+  r1_weight_s: 10.0         # MỚI — R1 gradient penalty cho D_s (ngăn collapse)
+  d_update_ratio: 2         # Train D this many times per G step
 
 model:
-  ch: 64                  # Base channel size for D (was 32, increased to prevent D collapse)
+  ch: 64                  # Base channel size for D
   sn: true                # Spectral Normalization in D
