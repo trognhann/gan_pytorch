@@ -1,12 +1,27 @@
 import torch
 import torch.nn as nn
-from .vgg import VGG19
 
 
 class StyleLoss(nn.Module):
-    def __init__(self, weights=[0.1, 5.0, 25.0], vgg=None):
+    def __init__(self, weights=[0.1, 5.0, 25.0], vgg=None, feature_extractor=None):
+        """
+        Grayscale Style Loss using Gram matrices on 3 feature levels.
+
+        Args:
+            weights: Loss weights for each feature level [low, mid, high].
+            vgg: (deprecated) VGG19 instance for backward compat.
+            feature_extractor: Any feature extractor (VGG19 or CLIP) that
+                               returns (f_low, f_mid, f_high) tuple.
+        """
         super(StyleLoss, self).__init__()
-        self.vgg = vgg if vgg is not None else VGG19()
+        # Prefer feature_extractor; fall back to vgg for backward compat
+        if feature_extractor is not None:
+            self.extractor = feature_extractor
+        elif vgg is not None:
+            self.extractor = vgg
+        else:
+            from .vgg import VGG19
+            self.extractor = VGG19()
         self.weights = weights
         self.l1 = nn.L1Loss()
 
@@ -26,8 +41,8 @@ class StyleLoss(nn.Module):
         style_gray = self.rgb_to_grayscale(style)
         fake_gray = self.rgb_to_grayscale(fake)
 
-        s2, s3, s4 = self.vgg(style_gray)
-        f2, f3, f4 = self.vgg(fake_gray)
+        s2, s3, s4 = self.extractor(style_gray)
+        f2, f3, f4 = self.extractor(fake_gray)
 
         with torch.amp.autocast('cuda', enabled=False):
             s2, f2 = s2.to(torch.float32), f2.to(torch.float32)

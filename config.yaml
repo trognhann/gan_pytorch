@@ -43,6 +43,11 @@ loss_weights:
   r1_weight_s: 10.0         # MỚI — R1 gradient penalty cho D_s (ngăn collapse)
   d_update_ratio: 2         # Train D this many times per G step
 
+feature_extractor:
+  type: "clip"                              # "vgg19" or "clip"
+  clip_model: "openai/clip-vit-base-patch16"
+  clip_layers: [4, 8, 12]                   # ViT layers to extract features from
+
 model:
   ch: 64                  # Base channel size for D
   sn: true                # Spectral Normalization in D

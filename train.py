@@ -23,6 +23,7 @@ from models.generator import Generator
 from models.discriminator import Discriminator
 from models.guided_filter import guided_filter
 from losses.vgg import VGG19
+from losses.clip_extractor import CLIPFeatureExtractor
 from losses.content import ContentLoss
 from losses.style import StyleLoss
 from losses.color_lab import ColorLoss
@@ -84,13 +85,27 @@ def train(cfg):
     D_s = Discriminator(in_channels=3, ch=m_cfg['ch'], sn=m_cfg['sn']).to(device)
     D_m = Discriminator(in_channels=3, ch=m_cfg['ch'], sn=m_cfg['sn']).to(device)
 
-    # ── Loss modules (share single VGG) ─────────────────────────────────
-    vgg = VGG19().to(device).eval()
-    content_loss_fn = ContentLoss(weight=1.0, vgg=vgg).to(device)
-    style_loss_fn = StyleLoss(weights=w_cfg['sty_weight'], vgg=vgg).to(device)
+    # ── Feature Extractor (shared by loss modules) ───────────────────────
+    fe_cfg = cfg.get('feature_extractor', {})
+    fe_type = fe_cfg.get('type', 'vgg19').lower()
+
+    if fe_type == 'clip':
+        clip_model = fe_cfg.get('clip_model', 'openai/clip-vit-base-patch16')
+        clip_layers = fe_cfg.get('clip_layers', [4, 8, 12])
+        feature_ext = CLIPFeatureExtractor(
+            model_name=clip_model, layers=clip_layers
+        ).to(device).eval()
+        logger.info(f"Feature extractor: CLIP ({clip_model}), layers={clip_layers}")
+    else:
+        feature_ext = VGG19().to(device).eval()
+        logger.info("Feature extractor: VGG19 (default)")
+
+    # ── Loss modules (share single feature extractor) ───────────────────
+    content_loss_fn = ContentLoss(weight=1.0, feature_extractor=feature_ext).to(device)
+    style_loss_fn = StyleLoss(weights=w_cfg['sty_weight'], feature_extractor=feature_ext).to(device)
     color_loss_fn = ColorLoss().to(device)
     gan_loss_fn = GANLoss().to(device)
-    region_loss_fn = RegionSmoothingLoss(weight=1.0, vgg=vgg).to(device)
+    region_loss_fn = RegionSmoothingLoss(weight=1.0, feature_extractor=feature_ext).to(device)
     l1_loss_fn = nn.L1Loss()
 
     # ── Optimizers ──────────────────────────────────────────────────────
