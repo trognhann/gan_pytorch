@@ -3,7 +3,7 @@
 training:
   # General
   dataset_dir: "/kaggle/input/datasets/tronynhan/dataa-pytorch/dataset" # Directory where datasets are stored
-  epochs: 20              # ⬆ Từ 10 → 20: Thêm training time
+  epochs: 10              # ⬆ Từ 10 → 20: Thêm training time
   init_epochs: 5          # Generator pre-train epochs
   batch_size: 8
   save_freq: 1            # Frequency (in epochs) to save checkpoints
